@@ -54,23 +54,27 @@ function draw()
 
   var drawLine = function()
   {
-    var Z = [0, 0];
-    var C = [x_start, ploty];
+    var Zr = 0;
+    var Zi = 0;
+    var Tr = 0;
+    var Cr = x_start;
+    var Ci = ploty;
     var off = 4*y*img.width;
     var col = 0;
 
     for ( var x=0; x<canvas.width; ++x ) {
-      Z = [0, 0];
+      Zr = Zi = 0;
 
       for ( var i=0; i<steps; ++i ) {
-        if ( (Z[0]*Z[0] + Z[1]*Z[1]) > threshold )
+        if ( (Zr*Zr + Zi*Zi) > threshold )
           break;
 
-        Z = [Z[0]*Z[0] - Z[1]*Z[1] + C[0],
-             2*Z[0]*Z[1] + C[1]];
+        Tr = Zr*Zr - Zi*Zi + Cr;
+        Zi = 2*Zr*Zi + Ci;
+        Zr = Tr;
       }
 
-      col = (i>0)*Math.sqrt(Z[0]*Z[0] + Z[1]*Z[1])*100;
+      col = (i>0)*Math.sqrt(Zr*Zr + Zi*Zi)*100;
 
       img.data[off++] = col;
       img.data[off++] = col;
@@ -78,7 +82,7 @@ function draw()
       img.data[off++] = 255;
 
       ++pixels;
-      C[0] += x_step;
+      Cr += x_step;
     }
 
     ploty += y_step;
