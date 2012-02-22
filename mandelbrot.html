@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mandelbrot in HTML5 canvas</title>
+
+    <!--
+      Vanilla Mandelbrot Set renderer with canvas and javascript
+
+      Written by Christian Stigen Larsen
+      http://csl.sublevel3.org
+
+      Put in the public domain by the author
+      2012-02-22
+    -->
+
+    <style type="text/css">
+      body {
+        padding: 0px;
+        margin: 0px;
+      }
+
+      #canvasMandelbrot {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        z-index: 0;
+        padding: 0px;
+        margin: 0px;
+      }
+
+      #description {
+        z-index: 10;
+        position: absolute;
+        background-color: rgba(0, 0, 30, 0.3);
+        font-family: sans-serif;
+        padding: 20px;
+        margin: 20px;
+        border: 1px solid rgba(0, 0, 20, 0.3);
+        color: #FF4B03; /*#FF5A00;*/
+        text-shadow: 0px 1px 0px rgb(220, 220, 220);
+      }
+
+      #description form {
+        color: black;
+      }
+
+      #description p {
+        color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="description">
+      <header>
+        <h1>The Mandelbrot Set in HTML5 Canvas</h1>
+        <p>Rendering time: <span id='renderMS'>?</span> ms
+        </p>
+        </header>
+
+        <form action="javascript:draw();">
+          <table>
+            <tr>
+              <td>Steps</td>
+              <td> <input type="text" id="steps" value="20" /> </td>
+            </tr>
+            <tr>
+              <td>Threshold</td>
+              <td> <input type="text" id="threshold" value="3.0" /> </td>
+          </tr>
+          <tr>
+            <td colspan="2"><input type="submit" value="Draw" /></td>
+          </tr>
+
+        </table>
+        </form>
+    </div>
+
+    <div id="canvasContainer">
+      <canvas id="canvasMandelbrot" width="640" height="480">
+      </canvas>
+    </div>
+
+    <script type="text/javascript" src="mandelbrot.js">
+    </script>
+  </body>
+</html>
