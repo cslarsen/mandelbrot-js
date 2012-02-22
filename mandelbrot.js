@@ -24,7 +24,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 //canvas.width = 640; canvas.height = 480;
 var ctx = canvas.getContext('2d');
-var img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+var img = ctx.createImageData(canvas.width, 1);
 
 window.onresize = function(event)
 {
@@ -32,7 +32,7 @@ window.onresize = function(event)
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   ctx = canvas.getContext('2d');
-  img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  img = ctx.createImageData(0, 0, canvas.width, 1);
 }
 
 function draw()
@@ -83,10 +83,10 @@ function draw()
 
   (function animation() {
     if ( y++ < canvas.height ) {
-      drawLine(ploty, (y*img.width)<<2, x_start, x_step);
+      drawLine(ploty, 0, x_start, x_step);
       ploty  += y_step;
       pixels += img.width;
-      ctx.putImageData(img, 0, 0);
+      ctx.putImageData(img, 0, y);
       setTimeout(animation);
     }
 
@@ -95,5 +95,4 @@ function draw()
     document.getElementById('renderMS').innerHTML = elapsedMS;
     document.getElementById('renderSpeed').innerHTML = Math.floor(1000.0*pixels/elapsedMS);
   })();
-
 }

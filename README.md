@@ -209,6 +209,31 @@ a _much_ faster way would be to do
 So now we've basically saved the work of doing `2*width*height`
 multiplications, or 600 thousand of them, assuming a 640x480 image.
 
+Fast copying of the image data
+------------------------------
+
+To draw in the canvas, you request an array, update it and copy it back to
+the canvas.
+
+Of course, you want to reduce the number of such operations.  Because we
+want an animation showing each line as it is drawn, we'll do this:
+
+  * Get an image data array
+  * For each line:
+  ** Update the array
+  ** Copy the array back to the canvas
+
+The trick here, though is to _not_ use `getImageData`.  You're going to
+overwrite all existing image data, so you can use the same buffer for every
+line.  So instead, we'll use these operations:
+
+  * Get a line buffer by calling `createImageData(canvas.width, 1)`
+  * For each line:
+  ** Update the line buffer array
+  ** Call `putImageData(linebuffer, 0, y_position)` to copy only _one_ line
+
+This ensures that we only copy _one_ line per frame update.
+
 Embarrassingly parallel
 -----------------------
 
