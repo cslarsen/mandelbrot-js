@@ -52,6 +52,12 @@
       #description table {
         color: black;
       }
+
+      #description .textInput {
+        background-color: transparent;
+        border: #ccc 1px solid;
+        font-size: 10pt;
+      }
     </style>
   </head>
   <body>
@@ -74,11 +80,11 @@
           <table>
             <tr>
               <td>Steps</td>
-              <td> <input type="text" id="steps" value="20" /> </td>
+              <td> <input class="textInput" type="text" id="steps" value="20" /> </td>
             </tr>
             <tr>
               <td>Threshold</td>
-              <td> <input type="text" id="threshold" value="2.0" /> </td>
+              <td> <input class="textInput" type="text" id="threshold" value="2.0" /> </td>
           </tr>
           <tr>
             <td colspan="2"><input type="submit" value="Draw" /></td>
