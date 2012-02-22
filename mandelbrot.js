@@ -9,62 +9,6 @@
  *
  */
 
-function complex(re, im)
-{
-  this.re = re;
-  this.im = im;
-}
-
-complex.prototype = {
-  re: 0,
-  im: 0,
-
-  add: function() {
-    var c = arguments[0];
-    return new complex(this.re + c.re, this.im + c.im);
-  },
-
-  sub: function() {
-    var c = arguments[0];
-    return new complex(this.re - c.re, this.im - c.im);
-  },
-
-  mul: function() {
-    var re = arguments[0].re;
-    var im = arguments[0].im;
-
-    return new complex(
-      this.re*re - this.im*im,
-      this.re*im + this.im*re);
-  },
-
-  mag: function() {
-    return Math.sqrt(this.re*this.re + this.im*this.im)
-  },
-
-  toString: function() {
-    return "" + this.re + (this.im<0? "" : "+") + this.im + "i";
-  },
-}
-
-function mandelbrotp_iter(z, c, steps, threshold)
-{
-  while ( steps-- != 0 ) {
-    if ( z.mag() > threshold )
-      return [true, z.mag()];
-
-    // C_{n+1} = C_{n}^2 + c, C_{0} = c
-    z = z.mul(z).add(c);
-  }
-
-  return [false, z.mag()];
-}
-
-function mandelbrotp(c, steps, threshold)
-{
-  return mandelbrotp_iter(new complex(0, 0), c, steps, threshold);
-}
-
 function plot(img, x, y, r, g, b, a)
 {
   var off = x + y*img.width;
@@ -78,6 +22,8 @@ function plot(img, x, y, r, g, b, a)
 var canvas = document.getElementById('canvasMandelbrot');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+//canvas.width = 640;
+//canvas.height = 480;
 var ctx = canvas.getContext('2d');
 var img = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -94,6 +40,7 @@ function draw()
 {
   var steps = parseInt(document.getElementById('steps').value);
   var threshold = parseFloat(document.getElementById('threshold').value);
+  threshold *= threshold; // optimization trick
 
   var x_start = -2.0;
   var x_stop = 1.0;
@@ -106,16 +53,35 @@ function draw()
   var ploty = y_start;
   var y=0;
 
-  var drawX = function() {
-    var plotx = x_start;
+  var drawLine = function()
+  {
+    var Z = [0, 0];
+    var C = [x_start, ploty];
+
     for ( var x=0; x<canvas.width; ++x ) {
-      var result = mandelbrotp(new complex(plotx, ploty), steps, threshold);
-      plotit = result[0];
-      color = result[1];
-      color *= 100;
+      Z = [0, 0];
+
+      for ( var i=0; i<steps; ++i ) {
+        // optimization trick: threshold is already squared,
+        // so no need to take the square root on the left side
+        if ( (Z[0]*Z[0] + Z[1]*Z[1]) > threshold )
+          break; // diverged
+
+        // $ C_{n+1} = C_{n}^2 + C_{0} $
+        Z = [Z[0]*Z[0] - Z[1]*Z[1] + C[0],
+             2*Z[0]*Z[1] + C[1]];
+      }
+
+      var color = 0;
+
+      // diverged?
+      if ( i > 0 )
+        color = Math.sqrt(Z[0]*Z[0] + Z[1]*Z[1])*100;
+
       plot(img, x, y, color, color, color, 255);
+
       ++pixels;
-      plotx += x_step;
+      C[0] += x_step;
     }
     ploty += y_step;
   };
@@ -125,7 +91,7 @@ function draw()
 
   (function animation() {
     if ( y++ < canvas.height ) {
-      drawX();
+      drawLine();
       ctx.putImageData(img, 0, 0);
       setTimeout(animation);
     }

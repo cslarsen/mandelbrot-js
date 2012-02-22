@@ -106,6 +106,99 @@ Taking advantage of symmetry
 You've probably noticed that the plot is reflected vertically over the line
 `y=0`.  One can take advantage of this.
 
+Splitting up the main equation
+------------------------------
+
+The main equation is
+
+    C_{n+1} = C_{n}^2 + C_{0}
+
+Setting `Cr = Re(C)` and `Ci = Im(C)`, we get
+
+    C_{n+1} = Cr^2 + 2Cr*Ci*i - Ci*Ci + C_{0}
+    C_{n+1} = (Cr^2 - Ci^2) + i(2Cr*Ci) + C_{0}
+
+giving us
+
+    Re(C_{n+1}) = Cr^2 - Ci^2 + x
+    Im(C_{n+1}) = 2*Cr*Ci + y
+
+This doesn't really offer any significant speedup by itself, but allows us
+to more easily write the code within tight loops.
+
+Fast indexing into the image data struct
+----------------------------------------
+
+To plot individual pixels in HTML5 canvas, you get an array and you have to
+calculate the array offset for a given coordinate pair.
+
+I.e., given RGBA pixel format (four positions), an (x, y) coordinate pair
+and a width and height, you calculate it by
+
+    offset = 4*x + 4*y*width
+
+so that you can now set the RGBA values as
+
+    array[offset+0] = red
+    array[offset+1] = green
+    array[offset+2] = blue
+    array[offset+3] = alpha
+
+There are several ways of optimizing this.  For instance, we can simply
+multiply the whole offset by four, which is the same as shifting all bits
+left two positions.  However, javascript works in mysterious ways, so the
+customary shift operations may not be as fast as in other languages like C
+and C++.  The reason _probably_ has to do with the fact that javascript only
+has _one_ data type for numbers, and my guess is that it's some kind of
+float.
+
+Anyway, we now have
+
+    offset = (x + y*width) << 2
+
+Another trick I'd like to mention.  Say that the width and height are fixed
+to, say 640 and 480, respectively.  And old trick to multiply y by 640 would
+be notice that 640 = 512 + 128 = 2^9 + 2^7, giving us
+
+    y*640 = y*512 + y*128 = y*2^9 + y*2^7 = y<<9 + y<<7
+
+So now we've converted one multiplication into two shifts and an add.  In
+your commodity language and hardware, this might be quite fast in tight
+innerloops.
+
+Anyway, we still want to be able to use arbitrary heights and widths, so
+let's skip that one.
+
+By far, the fastest way of accessing the array is by doing it sequentially.
+
+That is, instead of doing
+
+    for ( y=0; y<height; ++y )
+    for ( x=0; x<width; ++x ) {
+      // calculate RGBA
+      var offset = 4*(x + y*with);
+      image.data[offset + 0] = R;
+      image.data[offset + 1] = G;
+      image.data[offset + 2] = B;
+      image.data[offset + 3] = A;
+    }
+
+a _much_ faster way would be to do
+
+    var offset = 0;
+    for ( y=0; y<height; ++y )
+    for ( x=0; x<width; ++x ) {
+      image.data[offset + 0] = R;
+      image.data[offset + 1] = G;
+      image.data[offset + 2] = B;
+      image.data[offset + 3] = A;
+
+      ++offset;
+    }
+
+So now we've basically saved the work of doing `2*width*height`
+multiplications, or 600 thousand of them, assuming a 640x480 image.
+
 Embarrassingly parallel
 -----------------------
 

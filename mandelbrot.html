@@ -48,14 +48,26 @@
       #description p {
         color: black;
       }
+
+      #description table {
+        color: black;
+      }
     </style>
   </head>
   <body>
     <div id="description">
       <header>
         <h1>The Mandelbrot Set in HTML5 Canvas</h1>
-        <p>Rendering time: <span id='renderMS'>?</span> ms </p>
-        <p>Speed: <span id='renderSpeed'>?</span> pixels / second</p>
+        <table>
+          <tr>
+            <td>Rendering time</td>
+            <td><span id='renderMS'>?</span> ms</td>
+          </tr>
+          <tr>
+            <td>Speed</td>
+            <td><span id='renderSpeed'>?</span> pixels / second</td>
+          </tr>
+        </table>
         </header>
 
         <form action="javascript:draw();">
