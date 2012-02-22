@@ -62,15 +62,16 @@ I said above that if the function diverges, one should plot a non-black dot.
 One could simply paint a white dot here.  But instead, maybe we want to get
 an idea of _how fast_ the function is diverging to infinity at this point.
 
-To do this, just take the current value of `C` and _map_ that against a
-color spectrum, and paint that color.  So, functions diverging quickly will
-get about the same color.
+To do this, just take the current value of the number of steps performed
+and _map_ that against a color spectrum, and paint that color.  
+
+So, functions diverging quickly will get about the same color.
 
 Optimizing the calculation for performance
 ==========================================
 
 Calculating the Mandelbrot set is quite slow, but there are a lot of tricks
-to speed it up.  
+to speed it up.
 
 When speeding up any code, the first step (after making the code _correct_,
 of course) is to look at the algorithm and try to use one with a simpler

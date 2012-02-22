@@ -35,6 +35,21 @@ window.onresize = function(event)
   img = ctx.createImageData(0, 0, canvas.width, 1);
 }
 
+/*
+ * Color tables
+ */
+var red   = new Array(256);
+var green = new Array(256);
+var blue  = new Array(256);
+
+// generate color tables
+red[0] = green[0] = blue[0];
+for ( var i=1; i<256; ++i ) {
+  red  [i] = 128-i;
+  green[i] = 128-i;
+  blue [i] = 256-i;
+}
+
 function draw()
 {
   var steps = parseInt(document.getElementById('steps').value);
@@ -64,16 +79,18 @@ function draw()
     for ( var x=0; x<img.width; ++x, Cr += x_step ) {
       Zr = Zi = Tr = Ti = 0;
 
-      for ( var i=0; i<steps && (Tr+Ti)<=threshold; ++i ) {
+      var i=0;
+      for ( ; i<steps && (Tr+Ti)<=threshold; ++i ) {
         Zi = 2 * Zr * Zi + Ci;
         Zr = Tr - Ti + Cr;
         Tr = Zr * Zr;
         Ti = Zi * Zi;
       }
 
-      img.data[off++] =
-      img.data[off++] =
-      img.data[off++] = (i>0)*Math.sqrt(Tr+Ti)*100;
+      i = Math.floor(255*(steps-i)/steps);
+      img.data[off++] =   red[i];
+      img.data[off++] = green[i];
+      img.data[off++] =  blue[i];
       img.data[off++] = 255;
     }
   };
