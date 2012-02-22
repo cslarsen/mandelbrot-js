@@ -114,12 +114,14 @@ function draw()
       color = result[1];
       color *= 100;
       plot(img, x, y, color, color, color, 255);
+      ++pixels;
       plotx += x_step;
     }
     ploty += y_step;
   };
 
   var start = (new Date).getTime();
+  var pixels = 0;
 
   (function animation() {
     if ( y++ < canvas.height ) {
@@ -129,7 +131,9 @@ function draw()
     }
 
     var stop = (new Date).getTime();
-    document.getElementById('renderMS').innerHTML = stop - start;
+    var elapsedMS = stop - start;
+    document.getElementById('renderMS').innerHTML = elapsedMS;
+    document.getElementById('renderSpeed').innerHTML = Math.floor(1000.0*pixels/elapsedMS);
   })();
 
 }
