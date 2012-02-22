@@ -120,11 +120,23 @@ Setting `Cr = Re(C)` and `Ci = Im(C)`, we get
 
 giving us
 
-    Re(C_{n+1}) = Cr^2 - Ci^2 + x
-    Im(C_{n+1}) = 2*Cr*Ci + y
+    Re (C_{n+1}) = Cr^2 - Ci^2 + x
+    Im (C_{n+1}) = 2*Cr*Ci + y
+    Mag(C_{n+1}) = sqrt(Cr^2 + Ci^2)
 
-This doesn't really offer any significant speedup by itself, but allows us
-to more easily write the code within tight loops.
+If we introduce two variables `Tr = Cr^2` and `Ti = Ci^2`, we get
+
+    Re (C_{n+1})   = Tr - Ti + x
+    Im (C_{n+1})   = 2*Cr*Ci + y
+    Mag(C_{n+1})^2 = Tr + Ti
+    Tr             = Re(C_{n+1}))^2
+    Ti             = Im(C_{n+1}))^2
+
+So we have now replaced some multiplications with additions, which is
+normally faster in most CPUs.  But, again, this is javascript, and
+javascript has quite a different performance profile.  The code above indeed
+does _not_ give us any **significant** speedup --- for a 640x480 image, we
+only save a hundred milliseconds, or so.
 
 Fast indexing into the image data struct
 ----------------------------------------

@@ -57,32 +57,28 @@ function draw()
     var Zr = 0;
     var Zi = 0;
     var Tr = 0;
+    var Ti = 0;
     var Cr = x_start;
     var Ci = ploty;
-    var off = 4*y*img.width;
+    var off = (y*img.width)<<2;
     var col = 0;
 
-    for ( var x=0; x<canvas.width; ++x ) {
-      Zr = Zi = 0;
+    for ( var x=0; x<canvas.width; ++x, Cr += x_step, ++pixels ) {
+      Zr = Zi = Tr = Ti = 0;
 
-      for ( var i=0; i<steps; ++i ) {
-        if ( (Zr*Zr + Zi*Zi) > threshold )
-          break;
-
-        Tr = Zr*Zr - Zi*Zi + Cr;
-        Zi = 2*Zr*Zi + Ci;
-        Zr = Tr;
+      for ( var i=0; i<steps && (Tr+Ti)<=threshold; ++i ) {
+        Zi = 2 * Zr * Zi + Ci;
+        Zr = Tr - Ti + Cr;
+        Tr = Zr * Zr;
+        Ti = Zi * Zi;
       }
 
-      col = (i>0)*Math.sqrt(Zr*Zr + Zi*Zi)*100;
+      col = (i>0)*Math.sqrt(Tr + Ti)*100;
 
-      img.data[off++] = col;
-      img.data[off++] = col;
+      img.data[off++] =
+      img.data[off++] =
       img.data[off++] = col;
       img.data[off++] = 255;
-
-      ++pixels;
-      Cr += x_step;
     }
 
     ploty += y_step;
