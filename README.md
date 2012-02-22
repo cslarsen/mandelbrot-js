@@ -188,12 +188,10 @@ a _much_ faster way would be to do
     var offset = 0;
     for ( y=0; y<height; ++y )
     for ( x=0; x<width; ++x ) {
-      image.data[offset + 0] = R;
-      image.data[offset + 1] = G;
-      image.data[offset + 2] = B;
-      image.data[offset + 3] = A;
-
-      ++offset;
+      image.data[offset++] = R;
+      image.data[offset++] = G;
+      image.data[offset++] = B;
+      image.data[offset++] = A;
     }
 
 So now we've basically saved the work of doing `2*width*height`

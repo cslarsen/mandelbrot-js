@@ -22,8 +22,7 @@ function plot(img, x, y, r, g, b, a)
 var canvas = document.getElementById('canvasMandelbrot');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-//canvas.width = 640;
-//canvas.height = 480;
+//canvas.width = 640; canvas.height = 480;
 var ctx = canvas.getContext('2d');
 var img = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -57,32 +56,31 @@ function draw()
   {
     var Z = [0, 0];
     var C = [x_start, ploty];
+    var off = 4*y*img.width;
+    var col = 0;
 
     for ( var x=0; x<canvas.width; ++x ) {
       Z = [0, 0];
 
       for ( var i=0; i<steps; ++i ) {
-        // optimization trick: threshold is already squared,
-        // so no need to take the square root on the left side
         if ( (Z[0]*Z[0] + Z[1]*Z[1]) > threshold )
-          break; // diverged
+          break;
 
-        // $ C_{n+1} = C_{n}^2 + C_{0} $
         Z = [Z[0]*Z[0] - Z[1]*Z[1] + C[0],
              2*Z[0]*Z[1] + C[1]];
       }
 
-      var color = 0;
+      col = (i>0)*Math.sqrt(Z[0]*Z[0] + Z[1]*Z[1])*100;
 
-      // diverged?
-      if ( i > 0 )
-        color = Math.sqrt(Z[0]*Z[0] + Z[1]*Z[1])*100;
-
-      plot(img, x, y, color, color, color, 255);
+      img.data[off++] = col;
+      img.data[off++] = col;
+      img.data[off++] = col;
+      img.data[off++] = 255;
 
       ++pixels;
       C[0] += x_step;
     }
+
     ploty += y_step;
   };
 
