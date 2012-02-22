@@ -52,18 +52,16 @@ function draw()
   var ploty = y_start;
   var y=0;
 
-  var drawLine = function()
+  var drawLine = function(Ci, off, x_start, x_step, pixels)
   {
     var Zr = 0;
     var Zi = 0;
     var Tr = 0;
     var Ti = 0;
     var Cr = x_start;
-    var Ci = ploty;
-    var off = (y*img.width)<<2;
     var col = 0;
 
-    for ( var x=0; x<canvas.width; ++x, Cr += x_step, ++pixels ) {
+    for ( var x=0; x<img.width; ++x, Cr += x_step ) {
       Zr = Zi = Tr = Ti = 0;
 
       for ( var i=0; i<steps && (Tr+Ti)<=threshold; ++i ) {
@@ -73,15 +71,11 @@ function draw()
         Ti = Zi * Zi;
       }
 
-      col = (i>0)*Math.sqrt(Tr + Ti)*100;
-
       img.data[off++] =
       img.data[off++] =
-      img.data[off++] = col;
+      img.data[off++] = (i>0)*Math.sqrt(Tr+Ti)*100;
       img.data[off++] = 255;
     }
-
-    ploty += y_step;
   };
 
   var start = (new Date).getTime();
@@ -89,7 +83,9 @@ function draw()
 
   (function animation() {
     if ( y++ < canvas.height ) {
-      drawLine();
+      drawLine(ploty, (y*img.width)<<2, x_start, x_step);
+      ploty  += y_step;
+      pixels += img.width;
       ctx.putImageData(img, 0, 0);
       setTimeout(animation);
     }
