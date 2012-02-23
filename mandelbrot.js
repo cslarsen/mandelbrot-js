@@ -66,8 +66,8 @@ function draw()
   var escapeRadius = parseFloat(document.getElementById('escapeRadius').value);
   escapeRadius *= escapeRadius; // optimization trick
 
-  var xRange = [-2.0, 1.0];
-  var yRange = [-1.0, 1.0];
+  var xRange = [-2.2, 1.0];
+  var yRange = [-1.2, 1.2];
 
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (canvas.height - 1);
