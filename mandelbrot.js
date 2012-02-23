@@ -81,7 +81,7 @@ function draw()
     var logBase = 1.0 / Math.log(2.0);
     var logHalfBaseMinusOne = Math.log(0.5)*logBase - 1.0;
 
-    for ( var x=0; x<img.width; ++x, Cr += Cr_step ) {
+    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step ) {
       var Zr = 0;
       var Zi = 0;
       var Tr = 0;
@@ -137,7 +137,7 @@ function draw()
     if ( y++ < canvas.height ) {
       drawLine(ploty, 0, xRange[0], dx);
       ploty  += dy;
-      pixels += img.width;
+      pixels += canvas.width;
       ctx.putImageData(img, 0, y);
       setTimeout(animation);
     }
