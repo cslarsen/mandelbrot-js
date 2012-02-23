@@ -63,8 +63,8 @@ function draw()
   }
 
   var steps = parseInt(document.getElementById('steps').value);
-  var threshold = parseFloat(document.getElementById('threshold').value);
-  threshold *= threshold; // optimization trick
+  var escapeRadius = parseFloat(document.getElementById('escapeRadius').value);
+  escapeRadius *= escapeRadius; // optimization trick
 
   var xRange = [-2.0, 1.0];
   var yRange = [-1.0, 1.0];
@@ -79,7 +79,7 @@ function draw()
   {
     var Cr = Cr_init;
     var logBase = 1.0 / Math.log(2.0);
-    var logHalfBaseMinusOne = Math.log(0.5)*logBase - 1.0;
+    var logHalfBase = Math.log(0.5)*logBase;
 
     for ( var x=0; x<canvas.width; ++x, Cr += Cr_step ) {
       var Zr = 0;
@@ -88,7 +88,18 @@ function draw()
       var Ti = 0;
       var n  = 0;
 
-      for ( ; n<steps && (Tr+Ti)<=threshold; ++n ) {
+      for ( ; n<steps && (Tr+Ti)<=escapeRadius; ++n ) {
+        Zi = 2 * Zr * Zi + Ci;
+        Zr = Tr - Ti + Cr;
+        Tr = Zr * Zr;
+        Ti = Zi * Zi;
+      }
+
+      /*
+       * Four more iterations to decrease error term;
+       * see http://linas.org/art-gallery/escape/escape.html
+       */
+      for ( var e=0; e<4; ++e ) {
         Zi = 2 * Zr * Zi + Ci;
         Zr = Tr - Ti + Cr;
         Tr = Zr * Zr;
@@ -112,7 +123,7 @@ function draw()
          *
          * but can be simplified using some elementary logarithm rules to
          */
-        var v = n - logHalfBaseMinusOne - Math.log(Math.log(Tr+Ti))*logBase;
+        var v = 5 + n - logHalfBase - Math.log(Math.log(Tr+Ti))*logBase;
 
         // then normalize for number of colors
         if ( isNaN(v) ) v = 0;
