@@ -19,40 +19,43 @@ function plot(img, x, y, r, g, b, a)
   img.data[off+3] = a;
 }
 
-var canvas = document.getElementById('canvasMandelbrot');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-//canvas.width = 640; canvas.height = 480;
-var ctx = canvas.getContext('2d');
-var img = ctx.createImageData(canvas.width, 1);
-
-window.onresize = function(event)
-{
-  canvas = document.getElementById('canvasMandelbrot');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  ctx = canvas.getContext('2d');
-  img = ctx.createImageData(0, 0, canvas.width, 1);
-}
 
 /*
  * Color table can be any length,
  * but should be cyclical
  */
+
 var colors = new Array(256);
-//
+var interiorColor = [0, 0, 0];
+
 for ( var i=0; i<colors.length; ++i ) {
-  var R = colors.length - i;
-  var G = colors.length - i;
-  var B = colors.length - i;
-  colors[i] = new Array(3);
-  colors[i][0] = R;
-  colors[i][1] = G;
-  colors[i][2] = B;
+  var R = 255*(i/(colors.length-1));
+  var G = 255*(i/(colors.length-1));
+  var B = 255*(i/(colors.length-1));
+  colors[i] = [R, G, B];
+}
+
+var reinit = true;
+
+window.onresize = function(event)
+{
+  reinit = true;
 }
 
 function draw()
 {
+  if ( reinit ) {
+    canvas = document.getElementById('canvasMandelbrot');
+    ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    //canvas.width = 640; canvas.height = 480;
+
+    img = ctx.createImageData(canvas.width, 1);
+    reinit = false;
+  }
+
   var steps = parseInt(document.getElementById('steps').value);
   var threshold = parseFloat(document.getElementById('threshold').value);
   threshold *= threshold; // optimization trick
@@ -71,33 +74,54 @@ function draw()
   var drawLine = function(Ci, off, x_start, x_step, pixels)
   {
     var Cr = x_start;
-    var logBase = 1.0 / Math.log(Math.sqrt(threshold));
-    var logHalf = Math.log(0.5);
+    var logBase = 1.0 / Math.log(2.0);
+    var logHalfBaseMinusOne = Math.log(0.5)*logBase - 1.0;
 
     for ( var x=0; x<img.width; ++x, Cr += x_step ) {
       var Zr = 0;
       var Zi = 0;
       var Tr = 0;
       var Ti = 0;
+      var n  = 0;
 
-      var i=0;
-      for ( ; i<steps && (Tr+Ti)<=threshold; ++i ) {
+      for ( ; n<steps && (Tr+Ti)<=threshold; ++n ) {
         Zi = 2 * Zr * Zi + Ci;
         Zr = Tr - Ti + Cr;
         Tr = Zr * Zr;
         Ti = Zi * Zi;
       }
 
-      // Instead of using RGB[i] directly, calculate smooth
-      // coloring
-      var v = 1+i-(logHalf + Math.log(Math.log(Tr+Ti)))*logBase;
+      /*
+       * Did equation converge?  Then this is an interior, and we'll
+       * simply paint it black.
+       */
+      var color = interiorColor;
 
-      // then normalize for number of colors
-      v = Math.floor((colors.length-1)*v/steps);
+      // Did it diverge? Then we've got an exterior
+      if ( n != steps ) {
+        // Instead of using RGB[i] directly, calculate smooth coloring:
 
-      img.data[off++] = 255-v/4;
-      img.data[off++] = 255-v;
-      img.data[off++] = 255-v/2;
+        /*
+         * Original smoothing equation is
+         *
+         * var v = 1 + n - Math.log(Math.log(Math.sqrt(Zr*Zr+Zi*Zi)))/Math.log(2.0);
+         *
+         * but can be simplified using some elementary logarithm rules to
+         */
+        var v = n - logHalfBaseMinusOne - Math.log(Math.log(Tr+Ti))*logBase;
+
+        // then normalize for number of colors
+        if ( isNaN(v) ) v = 0;
+        if ( !isFinite(v) ) v = steps;
+        v = Math.abs(colors.length*v/steps);
+
+        // but above log-equation isn't completely connected to STEPS, so:
+        color = colors[Math.floor(v) % colors.length];
+      }
+
+      img.data[off++] = color[0];
+      img.data[off++] = color[1];
+      img.data[off++] = color[2];
       img.data[off++] = 255;
     }
   };
@@ -117,6 +141,6 @@ function draw()
     var stop = (new Date).getTime();
     var elapsedMS = stop - start;
     document.getElementById('renderMS').innerHTML = elapsedMS;
-    document.getElementById('renderSpeed').innerHTML = Math.floor(1000.0*pixels/elapsedMS);
+    document.getElementById('renderSpeed').innerHTML = Math.floor(pixels/elapsedMS) + 'k';
   })();
 }

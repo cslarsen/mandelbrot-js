@@ -16,8 +16,11 @@
 
     <style type="text/css">
       body {
+        background-color: black;
         padding: 0px;
         margin: 0px;
+        font-size: 10pt;
+        text-shadow: 0px 1px 0px rgb(40, 40, 40);
       }
 
       #canvasMandelbrot {
@@ -33,13 +36,13 @@
       #description {
         z-index: 10;
         position: absolute;
-        background-color: rgba(80, 80, 80, 0.3);
+        background-color: rgba(30, 30, 30, 0.6);
         font-family: sans-serif;
         padding: 20px;
         margin: 20px;
-        border: 1px solid rgba(0, 0, 20, 0.3);
-        color: #FF4B03; /*#FF5A00;*/
-        text-shadow: 0px 1px 0px rgb(220, 220, 220);
+        border: 2px solid rgba(20, 20, 20, 0.6);
+        color: #FF3B03;
+        text-shadow: 0px 1px 0px rgb(40, 40, 40);
       }
 
       #description table {
@@ -47,21 +50,39 @@
       }
 
       #description input {
+        background-color: black;
         color: #ccc;
+        border-color: #333;
+      }
+
+      .headerText {
+        color: #666;
       }
 
       #description .textInput {
         background-color: transparent;
-        border: #ccc 1px solid;
+        border: #333 1px solid;
         font-size: 10pt;
+      }
+
+      hr {
+        border-color: #222;
       }
     </style>
   </head>
   <body>
     <div id="description">
       <header>
-        <h1>The Mandelbrot Set in HTML5 Canvas</h1>
-        <table>
+      <div style="text-align: center;">
+        <hr />
+        <h1>The Mandelbrot Set</h1>
+        <p class="headerText">In HTML5 Canvas and JavaScript</p>
+        <hr />
+      </div>
+      </p>
+      </header>
+        <form action="javascript:draw();">
+          <table>
           <tr>
             <td>Rendering time</td>
             <td><span id='renderMS'>?</span> ms</td>
@@ -70,24 +91,18 @@
             <td>Speed</td>
             <td><span id='renderSpeed'>?</span> pixels / second</td>
           </tr>
-        </table>
-        </header>
-
-        <form action="javascript:draw();">
-          <table>
-            <tr>
-              <td>Steps</td>
-              <td> <input class="textInput" type="text" id="steps" value="50" /> </td>
-            </tr>
-            <tr>
-              <td>Threshold</td>
-              <td> <input class="textInput" type="text" id="threshold" value="2.0" /> </td>
+          <tr>
+            <td>Maximum steps</td>
+            <td> <input class="textInput" type="text" id="steps" value="50" /> </td>
+          </tr>
+          <tr>
+            <td>Escape radius</td>
+            <td> <input class="textInput" type="text" id="threshold" value="2.0" /> </td>
           </tr>
           <tr>
             <td colspan="2"><input type="submit" value="Draw" /></td>
           </tr>
-
-        </table>
+          </table>
         </form>
     </div>
 
