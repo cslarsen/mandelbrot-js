@@ -36,18 +36,19 @@ window.onresize = function(event)
 }
 
 /*
- * Color tables
+ * Color table can be any length,
+ * but should be cyclical
  */
-var red   = new Array(256);
-var green = new Array(256);
-var blue  = new Array(256);
-
-// generate color tables
-red[0] = green[0] = blue[0];
-for ( var i=1; i<256; ++i ) {
-  red  [i] = 128-i;
-  green[i] = 128-i;
-  blue [i] = 256-i;
+var colors = new Array(256);
+//
+for ( var i=0; i<colors.length; ++i ) {
+  var R = colors.length - i;
+  var G = colors.length - i;
+  var B = colors.length - i;
+  colors[i] = new Array(3);
+  colors[i][0] = R;
+  colors[i][1] = G;
+  colors[i][2] = B;
 }
 
 function draw()
@@ -69,15 +70,15 @@ function draw()
 
   var drawLine = function(Ci, off, x_start, x_step, pixels)
   {
-    var Zr = 0;
-    var Zi = 0;
-    var Tr = 0;
-    var Ti = 0;
     var Cr = x_start;
-    var col = 0;
+    var logBase = 1.0 / Math.log(Math.sqrt(threshold));
+    var logHalf = Math.log(0.5);
 
     for ( var x=0; x<img.width; ++x, Cr += x_step ) {
-      Zr = Zi = Tr = Ti = 0;
+      var Zr = 0;
+      var Zi = 0;
+      var Tr = 0;
+      var Ti = 0;
 
       var i=0;
       for ( ; i<steps && (Tr+Ti)<=threshold; ++i ) {
@@ -87,10 +88,16 @@ function draw()
         Ti = Zi * Zi;
       }
 
-      i = Math.floor(255*(steps-i)/steps);
-      img.data[off++] =   red[i];
-      img.data[off++] = green[i];
-      img.data[off++] =  blue[i];
+      // Instead of using RGB[i] directly, calculate smooth
+      // coloring
+      var v = 1+i-(logHalf + Math.log(Math.log(Tr+Ti)))*logBase;
+
+      // then normalize for number of colors
+      v = Math.floor((colors.length-1)*v/steps);
+
+      img.data[off++] = 255-v/4;
+      img.data[off++] = 255-v;
+      img.data[off++] = 255-v/2;
       img.data[off++] = 255;
     }
   };
