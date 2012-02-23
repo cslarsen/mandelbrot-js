@@ -21,24 +21,30 @@ function plot(img, x, y, r, g, b, a)
 
 
 /*
- * Color table can be any length,
- * but should be cyclical
+ * Color table can be any length, but should be
+ * cyclical because of the modulus operation.
  */
-
 var colors = new Array(256);
-var interiorColor = [0, 0, 0];
+var interiorColor = [0, 0, 0, 255];
 
+/*
+ * Simple calculation of the color palette.
+ * This version is non-cyclical.
+ */
 for ( var i=0; i<colors.length; ++i ) {
   var R = 255*(i/(colors.length-1));
   var G = 255*(i/(colors.length-1));
   var B = 255*(i/(colors.length-1));
-  colors[i] = [R, G, B];
+  var A = 255;
+  colors[i] = [R, G, B, A];
 }
 
+// Whether to reload canvas size, etc.
 var reinit = true;
 
 window.onresize = function(event)
 {
+  // reinit dimentions on window resize
   reinit = true;
 }
 
@@ -48,7 +54,7 @@ function draw()
     canvas = document.getElementById('canvasMandelbrot');
     ctx = canvas.getContext('2d');
 
-    canvas.width = window.innerWidth;
+    canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
     //canvas.width = 640; canvas.height = 480;
 
@@ -60,24 +66,22 @@ function draw()
   var threshold = parseFloat(document.getElementById('threshold').value);
   threshold *= threshold; // optimization trick
 
-  var x_start = -2.0;
-  var x_stop = 1.0;
-  var x_step = (x_stop - x_start) / (0.5 + (canvas.width-1));
+  var xRange = [-2.0, 1.0];
+  var yRange = [-1.0, 1.0];
 
-  var y_start = -1.0;
-  var y_stop = 1.0;
-  var y_step = (y_stop - y_start) / (canvas.height - 1);
+  var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
+  var dy = (yRange[1] - yRange[0]) / (canvas.height - 1);
 
-  var ploty = y_start;
+  var ploty = yRange[0];
   var y=0;
 
-  var drawLine = function(Ci, off, x_start, x_step, pixels)
+  var drawLine = function(Ci, off, Cr_init, Cr_step, pixels)
   {
-    var Cr = x_start;
+    var Cr = Cr_init;
     var logBase = 1.0 / Math.log(2.0);
     var logHalfBaseMinusOne = Math.log(0.5)*logBase - 1.0;
 
-    for ( var x=0; x<img.width; ++x, Cr += x_step ) {
+    for ( var x=0; x<img.width; ++x, Cr += Cr_step ) {
       var Zr = 0;
       var Zi = 0;
       var Tr = 0;
@@ -122,7 +126,7 @@ function draw()
       img.data[off++] = color[0];
       img.data[off++] = color[1];
       img.data[off++] = color[2];
-      img.data[off++] = 255;
+      img.data[off++] = color[3];
     }
   };
 
@@ -131,8 +135,8 @@ function draw()
 
   (function animation() {
     if ( y++ < canvas.height ) {
-      drawLine(ploty, 0, x_start, x_step);
-      ploty  += y_step;
+      drawLine(ploty, 0, xRange[0], dx);
+      ploty  += dy;
       pixels += img.width;
       ctx.putImageData(img, 0, y);
       setTimeout(animation);
