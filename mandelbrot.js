@@ -9,17 +9,6 @@
  *
  */
 
-function plot(img, x, y, r, g, b, a)
-{
-  var off = x + y*img.width;
-  off <<= 2;
-  img.data[off+0] = r;
-  img.data[off+1] = g;
-  img.data[off+2] = b;
-  img.data[off+3] = a;
-}
-
-
 /*
  * Color table can be any length, but should be
  * cyclical because of the modulus operation.
