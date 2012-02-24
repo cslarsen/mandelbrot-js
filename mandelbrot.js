@@ -165,6 +165,9 @@ function draw()
   var start = (new Date).getTime();
   var pixels = 0;
 
+  // Do not allow several renderers
+  document.getElementById('submitButton').disabled = true;
+
   (function animation() {
     if ( y++ < canvas.height ) {
       drawLine(ploty, 0, xRange[0], dx);
@@ -173,6 +176,9 @@ function draw()
       ctx.putImageData(img, 0, y);
       setTimeout(animation);
     }
+
+    if ( y >= canvas.height )
+      document.getElementById('submitButton').disabled = false;
 
     var stop = (new Date).getTime();
     var elapsedMS = stop - start;
