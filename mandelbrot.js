@@ -182,7 +182,7 @@ function draw()
 
     var stop = (new Date).getTime();
     var elapsedMS = stop - start;
-    document.getElementById('renderMS').innerHTML = elapsedMS;
+    document.getElementById('renderMS').innerHTML = elapsedMS/1000.0;
     document.getElementById('renderSpeed').innerHTML = Math.floor(pixels/elapsedMS) + 'k';
   })();
 }
