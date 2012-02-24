@@ -24,7 +24,7 @@ function plot(img, x, y, r, g, b, a)
  * Color table can be any length, but should be
  * cyclical because of the modulus operation.
  */
-var colors = new Array(256);
+var colors = new Array(512);
 var interiorColor = [0, 0, 0, 255];
 
 /*
@@ -32,9 +32,9 @@ var interiorColor = [0, 0, 0, 255];
  * This version is non-cyclical.
  */
 for ( var i=0; i<colors.length; ++i ) {
-  var R = 255*(i/(colors.length-1));
-  var G = 255*(i/(colors.length-1));
-  var B = 255*(i/(colors.length-1));
+  var R = i<256? i : 255;
+  var G = i<256? i : 255;
+  var B = i<256? i : 255;
   var A = 255;
   colors[i] = [R, G, B, A];
 }
