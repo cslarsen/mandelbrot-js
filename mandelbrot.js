@@ -82,9 +82,6 @@ function draw()
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (canvas.height - 1);
 
-  var ploty = yRange[0];
-  var y=0;
-
   var drawLine = function(Ci, off, Cr_init, Cr_step, pixels)
   {
     var Cr = Cr_init;
@@ -157,21 +154,23 @@ function draw()
   // Do not allow several renderers
   document.getElementById('submitButton').disabled = true;
 
-  (function animation() {
-    if ( y++ < canvas.height ) {
+  var anim = function animation() {
+    var ploty = yRange[0];
+    var y = 0;
+
+    while ( y++ <= canvas.height ) {
       drawLine(ploty, 0, xRange[0], dx);
       ploty  += dy;
       pixels += canvas.width;
       ctx.putImageData(img, 0, y);
-      setTimeout(animation);
     }
-
-    if ( y >= canvas.height )
-      document.getElementById('submitButton').disabled = false;
 
     var stop = (new Date).getTime();
     var elapsedMS = stop - start;
     document.getElementById('renderTime').innerHTML = elapsedMS/1000.0;
     document.getElementById('renderSpeed').innerHTML = Math.floor(pixels/elapsedMS) + 'k';
-  })();
+    document.getElementById('submitButton').disabled = false;
+  };
+
+  setTimeout(anim);
 }
