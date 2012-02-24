@@ -9,6 +9,12 @@
  *
  */
 
+// Just a shorthand function
+function $(id)
+{
+  return document.getElementById(id);
+}
+
 /*
  * Color table can be any length, but should be
  * cyclical because of the modulus operation.
@@ -37,10 +43,29 @@ window.onresize = function(event)
   reinit = true;
 }
 
+function adjustAspectRatio(xRange, yRange, canvas)
+{
+  /*
+   * Adjust aspect ratio
+   */
+  var ratio = Math.abs(xRange[1]-xRange[0]) / Math.abs(yRange[1]-yRange[0]);
+  var sratio = canvas.width/canvas.height;
+
+  if ( sratio > ratio ) {
+    var f = sratio/ratio;
+    xRange[1] *= f;
+    xRange[0] *= f;
+  } else if ( sratio < ratio ) {
+    var f = ratio/sratio;
+    yRange[1] *= f;
+    yRange[0] *= f;
+  }
+}
+
 function draw()
 {
   if ( reinit ) {
-    canvas = document.getElementById('canvasMandelbrot');
+    canvas = $('canvasMandelbrot');
     ctx = canvas.getContext('2d');
 
     canvas.width  = window.innerWidth;
@@ -51,9 +76,8 @@ function draw()
     reinit = false;
   }
 
-  var steps = parseInt(document.getElementById('steps').value);
-  var escapeRadius = parseFloat(document.getElementById('escapeRadius').value);
-  escapeRadius *= escapeRadius; // optimization trick
+  var steps = parseInt($('steps').value);
+  var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
 
   /*
    * Plot rectangle in the complex plane
@@ -61,28 +85,12 @@ function draw()
   var xRange = [-2.2, 1.0];
   var yRange = [-1.2, 1.2];
 
-  /*
-   * Adjust aspect ratio
-   */
-  {
-    var ratio = Math.abs(xRange[1]-xRange[0]) / Math.abs(yRange[1]-yRange[0]);
-    var sratio = canvas.width/canvas.height;
-
-    if ( sratio > ratio ) {
-      var f = sratio/ratio;
-      xRange[1] *= f;
-      xRange[0] *= f;
-    } else if ( sratio < ratio ) {
-      var f = ratio/sratio;
-      yRange[1] *= f;
-      yRange[0] *= f;
-    }
-  }
+  adjustAspectRatio(xRange, yRange, canvas);
 
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (canvas.height - 1);
 
-  var drawLine = function(Ci, off, Cr_init, Cr_step, pixels)
+  function drawLine(Ci, off, Cr_init, Cr_step, pixels)
   {
     var Cr = Cr_init;
     var logBase = 1.0 / Math.log(2.0);
@@ -146,31 +154,29 @@ function draw()
       img.data[off++] = color[2];
       img.data[off++] = color[3];
     }
-  };
+  }
 
-  var start = (new Date).getTime();
-  var pixels = 0;
+  var anim = function() {
+    var start  = (new Date).getTime();
+    var pixels = 0;
+    var y = yRange[0];
 
-  // Do not allow several renderers
-  document.getElementById('submitButton').disabled = true;
-
-  var anim = function animation() {
-    var ploty = yRange[0];
-    var y = 0;
-
-    while ( y++ <= canvas.height ) {
-      drawLine(ploty, 0, xRange[0], dx);
-      ploty  += dy;
+    for ( var sy = 0; sy < canvas.height; ++sy ) {
+      drawLine(y, 0, xRange[0], dx);
+      y += dy;
       pixels += canvas.width;
-      ctx.putImageData(img, 0, y);
+      ctx.putImageData(img, 0, sy);
     }
 
-    var stop = (new Date).getTime();
-    var elapsedMS = stop - start;
-    document.getElementById('renderTime').innerHTML = elapsedMS/1000.0;
-    document.getElementById('renderSpeed').innerHTML = Math.floor(pixels/elapsedMS) + 'k';
-    document.getElementById('submitButton').disabled = false;
+    var elapsedMS = (new Date).getTime() - start;
+    $('renderTime').innerHTML = elapsedMS/1000.0;
+    $('renderSpeed').innerHTML = Math.floor(pixels/elapsedMS) + 'k';
+    $('submitButton').disabled = false;
   };
 
+  // Disallow redrawing while rendering
+  $('submitButton').disabled = true;
+
+  // Start rendering in background
   setTimeout(anim);
 }
