@@ -15,6 +15,13 @@ function $(id)
   return document.getElementById(id);
 }
 
+function scaled(number)
+{
+  var unit = ["", "k", "M", "G", "T", "P", "E"];
+  var mag = Math.ceil((1+Math.log(number)/Math.log(10))/3);
+  return "" + number/Math.pow(10, 3*(mag-1)) + unit[mag];
+}
+
 /*
  * Color table can be any length, but should be
  * cyclical because of the modulus operation.
@@ -170,7 +177,7 @@ function draw()
 
     var elapsedMS = (new Date).getTime() - start;
     $('renderTime').innerHTML = elapsedMS/1000.0;
-    $('renderSpeed').innerHTML = Math.floor(pixels/elapsedMS) + 'k';
+    $('renderSpeed').innerHTML = scaled(Math.floor(pixels/elapsedMS));
     $('submitButton').disabled = false;
   };
 
