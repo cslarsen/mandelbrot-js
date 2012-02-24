@@ -66,8 +66,29 @@ function draw()
   var escapeRadius = parseFloat(document.getElementById('escapeRadius').value);
   escapeRadius *= escapeRadius; // optimization trick
 
+  /*
+   * Plot rectangle in the complex plane
+   */
   var xRange = [-2.2, 1.0];
   var yRange = [-1.2, 1.2];
+
+  /*
+   * Adjust aspect ratio
+   */
+  {
+    var ratio = Math.abs(xRange[1]-xRange[0]) / Math.abs(yRange[1]-yRange[0]);
+    var sratio = canvas.width/canvas.height;
+
+    if ( sratio > ratio ) {
+      var f = sratio/ratio;
+      xRange[1] *= f;
+      xRange[0] *= f;
+    } else if ( sratio < ratio ) {
+      var f = ratio/sratio;
+      yRange[1] *= f;
+      yRange[0] *= f;
+    }
+  }
 
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (canvas.height - 1);
