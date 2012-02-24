@@ -156,7 +156,7 @@ function draw()
     }
   }
 
-  var anim = function() {
+  function render() {
     var start  = (new Date).getTime();
     var pixels = 0;
     var y = yRange[0];
@@ -178,5 +178,5 @@ function draw()
   $('submitButton').disabled = true;
 
   // Start rendering in background
-  setTimeout(anim);
+  setTimeout(render);
 }
