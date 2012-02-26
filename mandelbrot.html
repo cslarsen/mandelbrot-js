@@ -82,7 +82,7 @@
       </div>
       </p>
       </header>
-        <form action="javascript:draw();">
+        <form action="javascript:draw(lookAt, zoom);">
           <table>
           <tr>
             <td>Rendering time</td>
@@ -104,6 +104,13 @@
           <tr>
             <td>Escape radius</td>
             <td> <input class="textInput" size="4" type="text" id="escapeRadius" value="10.0" /> </td>
+          </tr>
+          <tr>
+            <td>Zoom</td>
+            <td><input class="textInput" type="text id="zoom" id="zoom" /></td>
+          </tr>
+          <tr>
+            <td colspan="2">&nbsp;</td>
           </tr>
           <tr>
             <td colspan="2"><input type="submit" id="submitButton" value="Draw" /></td>

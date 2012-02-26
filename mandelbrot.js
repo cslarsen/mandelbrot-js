@@ -9,10 +9,34 @@
  *
  */
 
+var lookAt = [-0.6, 0];
+var zoom = 1.7;
+var xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
+var yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
+
 // Just a shorthand function
 function $(id)
 {
   return document.getElementById(id);
+}
+
+$('zoom').value = zoom;
+
+$('canvasMandelbrot').onclick = function(event)
+{
+  var x = event.clientX;
+  var y = event.clientY;
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+
+  x /= w;
+  x = (1.0-x)*xRange[0] + x*xRange[1];
+  y /= h;
+  y = (1.0-y)*yRange[0] + y*yRange[1];
+
+  lookAt = [x, y];
+  zoom *= 0.5;
+  draw(lookAt, zoom);
 }
 
 function scaled(number)
@@ -69,7 +93,7 @@ function adjustAspectRatio(xRange, yRange, canvas)
   }
 }
 
-function draw()
+function draw(lookAt, zoom)
 {
   if ( reinit ) {
     canvas = $('canvasMandelbrot');
@@ -83,14 +107,18 @@ function draw()
     reinit = false;
   }
 
+  $('zoom').value = zoom;
+
   var steps = parseInt($('steps').value);
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
 
   /*
    * Plot rectangle in the complex plane
    */
-  var xRange = [-2.2, 1.0];
-  var yRange = [-1.2, 1.2];
+  if ( lookAt == null ) lookAt = [-0.6, 0];
+  if ( zoom == null ) zoom = 1.7;
+  xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
+  yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
 
   adjustAspectRatio(xRange, yRange, canvas);
 
