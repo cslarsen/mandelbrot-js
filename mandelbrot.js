@@ -10,7 +10,7 @@
  */
 
 var lookAt = [-0.6, 0];
-var zoom = 1.7;
+var zoom = 3.0;
 var xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
 var yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
 
@@ -29,10 +29,11 @@ $('canvasMandelbrot').onclick = function(event)
   var w = window.innerWidth;
   var h = window.innerHeight;
 
-  x /= w;
-  x = (1.0-x)*xRange[0] + x*xRange[1];
-  y /= h;
-  y = (1.0-y)*yRange[0] + y*yRange[1];
+  x /= (0.5 + (canvas.width-1));
+  x = xRange[0] + x*(xRange[1] - xRange[0]);
+
+  y /= (0.5 + (canvas.height-1));
+  y = yRange[0] + y*(yRange[1] - yRange[0]);
 
   lookAt = [x, y];
   zoom *= 0.5;
@@ -44,6 +45,35 @@ function scaled(number)
   var unit = ["", "k", "M", "G", "T", "P", "E"];
   var mag = Math.ceil((1+Math.log(number)/Math.log(10))/3);
   return "" + number/Math.pow(10, 3*(mag-1)) + unit[mag];
+}
+
+/*
+ * H = [0, 360]
+ * S = [0, 1]
+ * V = [0, 1]
+ */
+function hsv_to_rgb(h, s, v)
+{
+  var hp = h/60.0;
+  var c = v * s;
+  var x = c*(1 - Math.abs((hp % 2) - 1));
+
+  if ( 0<=hp && hp<1 ) rgb = [c, x, 0];
+  if ( 1<=hp && hp<2 ) rgb = [x, c, 0];
+  if ( 2<=hp && hp<3 ) rgb = [0, c, x];
+  if ( 3<=hp && hp<4 ) rgb = [0, x, c];
+  if ( 4<=hp && hp<5 ) rgb = [x, 0, c];
+  if ( 5<=hp && hp<6 ) rgb = [c, 0, x];
+
+  var m = v - c;
+  rgb[0] += m;
+  rgb[1] += m;
+  rgb[2] += m;
+
+  rgb[0] *= 255;
+  rgb[1] *= 255;
+  rgb[2] *= 255;
+  return rgb;
 }
 
 /*
@@ -116,9 +146,9 @@ function draw(lookAt, zoom)
    * Plot rectangle in the complex plane
    */
   if ( lookAt == null ) lookAt = [-0.6, 0];
-  if ( zoom == null ) zoom = 1.7;
-  xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
-  yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
+  if ( zoom == null ) zoom = 2.0;
+  xRange = [lookAt[0]-zoom/2, lookAt[0]+zoom/2];
+  yRange = [lookAt[1]-zoom/2, lookAt[1]+zoom/2];
 
   adjustAspectRatio(xRange, yRange, canvas);
 
@@ -178,10 +208,13 @@ function draw(lookAt, zoom)
         // then normalize for number of colors
         if ( isNaN(v) ) v = 0;
         if ( !isFinite(v) ) v = steps;
-        v = Math.abs(colors.length*v/steps);
 
         // but above log-equation isn't completely connected to STEPS, so:
-        color = colors[Math.floor(v) % colors.length];
+        //v = Math.abs(colors.length*v/steps);
+        //color = colors[Math.floor(v) % colors.length];
+        v = Math.floor(v) % 360;
+        color = hsv_to_rgb(v, 1.0, 1.0);
+        color.push(255);
       }
 
       img.data[off++] = color[0];
