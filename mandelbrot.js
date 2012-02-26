@@ -20,7 +20,7 @@ function $(id)
   return document.getElementById(id);
 }
 
-$('zoom').value = zoom;
+$('zoom').innerHTML = 1.0/zoom;
 
 $('canvasMandelbrot').onclick = function(event)
 {
@@ -107,7 +107,7 @@ function draw(lookAt, zoom)
     reinit = false;
   }
 
-  $('zoom').value = zoom;
+  $('zoom').innerHTML = 1.0/zoom;
 
   var steps = parseInt($('steps').value);
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
