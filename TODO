@@ -1,0 +1,4 @@
+- Supersampling options (none, 2, 4, 8, 16, etc)
+- Webworkers for concurrency?
+- Progress bar (requires yielding control)
+- HSV / Grayscale option
