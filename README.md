@@ -221,18 +221,16 @@ Of course, you want to reduce the number of such operations.  Because we
 want an animation showing each line as it is drawn, we'll do this:
 
   * Get an image data array
-  * For each line:
-  ** Update the array
-  ** Copy the array back to the canvas
+  * For each line: Update the array
+  * For each line: Copy the array back to the canvas
 
 The trick here, though is to _not_ use `getImageData`.  You're going to
 overwrite all existing image data, so you can use the same buffer for every
 line.  So instead, we'll use these operations:
 
   * Get a line buffer by calling `createImageData(canvas.width, 1)`
-  * For each line:
-  ** Update the line buffer array
-  ** Call `putImageData(linebuffer, 0, y_position)` to copy only _one_ line
+  * For each line: Update the line buffer array
+  * For each line: Call `putImageData(linebuffer, 0, y_position)` to copy only _one_ line
 
 This ensures that we only copy _one_ line per frame update.
 
