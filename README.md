@@ -63,7 +63,7 @@ One could simply paint a white dot here.  But instead, maybe we want to get
 an idea of _how fast_ the function is diverging to infinity at this point.
 
 To do this, just take the current value of the number of steps performed
-and _map_ that against a color spectrum, and paint that color.  
+and _map_ that against a color spectrum, and paint that color.
 
 So, functions diverging quickly will get about the same color.
 
@@ -246,9 +246,13 @@ parallel.
 Such algorithms are colloquially called
 [embarrassingly parallel](http://en.wikipedia.org/wiki/Embarrassingly_parallel).
 
-Now, I don't know how well the current javascript engines are at utilizing
-multicores, but you could _easily_ split up the plotting into four threads
-or so.
+Now, JavaScript is inherently single-threaded:  You can only use so-called
+green threads, meaning that the javascript engine will yield control between
+them.
+
+However, there is a new HTML5 APi called web workers that you can use to
+create real, OS-level threads.  That should make it easy to split up
+plotting into several threads (preferrably one per logical core).
 
 Using vectorized procedures
 ---------------------------
