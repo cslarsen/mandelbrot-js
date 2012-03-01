@@ -3,9 +3,10 @@
  *
  * Written by Christian Stigen Larsen
  * http://csl.sublevel3.org
+ * https://github.com/cslarsen/mandelbrot-js
  *
  * Put in the public domain by the author
- * 2012-02-22
+ * 2012-03-01
  *
  */
 

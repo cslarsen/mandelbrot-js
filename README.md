@@ -271,4 +271,4 @@ parallelism for hardware speedup.
 
 License
 -------
-Put in the public domain by the author -- February, 2012
+Put in the public domain by the author on March, 2012
