@@ -13,6 +13,7 @@ var lookAt = [-0.6, 0];
 var zoom = 3.0;
 var xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
 var yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
+var useHSV = false;
 
 // Just a shorthand function
 function $(id)
@@ -209,11 +210,15 @@ function draw(lookAt, zoom)
         if ( isNaN(v) ) v = 0;
         if ( !isFinite(v) ) v = steps;
 
-        // but above log-equation isn't completely connected to STEPS, so:
-        //v = Math.abs(colors.length*v/steps);
-        //color = colors[Math.floor(v) % colors.length];
-        v = Math.floor(v) % 360;
-        color = hsv_to_rgb(v, 1.0, 1.0);
+        if ( useHSV ) {
+          v = Math.floor(v) % 360;
+          color = hsv_to_rgb(v, 1.0, 1.0);
+        } else {
+          v = Math.abs(colors.length*v/steps);
+          color = colors[Math.floor(v) % colors.length];
+        }
+
+        // add alpha
         color.push(255);
       }
 
