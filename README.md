@@ -19,12 +19,12 @@ to infinity.
 
 The function is
 
-  `$ C_{n+1} = C_{n}^2 + C_{0} $`
+  `C_{n+1} = C_{n}^2 + C_{0}`
 
 with the initial condition simply formed by taking the coordinates in the
 complex plane,
 
-  `$ C_{0} = x + iy $`
+  `C_{0} = x + iy`
 
 Looking at the function, one can easily see that for big initial values, the
 function should diverge.  But for values close to origo (i.e., for |x| and
@@ -32,10 +32,11 @@ function should diverge.  But for values close to origo (i.e., for |x| and
 the product of two numbers less than one will always be less than either of
 the factors (e.g., 0.5 x 0.4 = 0.2, which is less than both factors).
 
-So, if you draw a loop around origo for all the points where |x| and |y| <
-1, what would you expect to see?  A circle of course.  **But that is _not_
-the case!**  Instead, we get an irregular shape that resembles nothing like
-a circle.  This is the Mandelbrot set.  One can also calculate it's
+But if we actually plot it, what we get out isn't any nice plot.  Instead,
+we get an amazingly complex and fractured plot.  This is the Mandelbrot set.
+
+You can zoom forever into the plot, and it will present you with an unending
+complex shape.  One can also calculate it's
 so-called [Hausdorff dimension](http://en.wikipedia.org/wiki/Hausdorff_dimension),
 which yields a noninteger number.  Thus, it's a fractal.
 
