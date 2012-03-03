@@ -10,38 +10,30 @@
  *
  */
 
+/*
+ * Global variables:
+ */
 var lookAt = [-0.6, 0];
 var zoom = 3.0;
 var xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
 var yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
+var interiorColor = [0, 0, 0, 255];
+var reInitCanvas = true; // Whether to reload canvas size, etc
 var useHSV = false;
+var useZoom = true;
+var colors = [[0,0,0,0]];
 
-// Just a shorthand function
+/*
+ * Just a shorthand function: Fetch given element, jQuery-style
+ */
 function $(id)
 {
   return document.getElementById(id);
 }
 
-$('zoom').innerHTML = 1.0/zoom;
-
-$('canvasMandelbrot').onclick = function(event)
-{
-  var x = event.clientX;
-  var y = event.clientY;
-  var w = window.innerWidth;
-  var h = window.innerHeight;
-
-  x /= (0.5 + (canvas.width-1));
-  x = xRange[0] + x*(xRange[1] - xRange[0]);
-
-  y /= (0.5 + (canvas.height-1));
-  y = yRange[0] + y*(yRange[1] - yRange[0]);
-
-  lookAt = [x, y];
-  zoom *= 0.5;
-  draw(lookAt, zoom);
-}
-
+/*
+ * Return number with metric units
+ */
 function scaled(number)
 {
   var unit = ["", "k", "M", "G", "T", "P", "E"];
@@ -50,9 +42,12 @@ function scaled(number)
 }
 
 /*
- * H = [0, 360]
- * S = [0, 1]
- * V = [0, 1]
+ * Convert hue-saturation-value/luminosity to RGB.
+ *
+ * Input ranges:
+ *   H =   [0, 360] (integer degrees)
+ *   S = [0.0, 1.0] (float)
+ *   V = [0.0, 1.0] (float)
  */
 function hsv_to_rgb(h, s, v)
 {
@@ -79,38 +74,11 @@ function hsv_to_rgb(h, s, v)
 }
 
 /*
- * Color table can be any length, but should be
- * cyclical because of the modulus operation.
+ * Adjust aspect ratio based on plot ranges and
+ * canvs dimensions.
  */
-var colors = new Array(512);
-var interiorColor = [0, 0, 0, 255];
-
-/*
- * Simple calculation of the color palette.
- * This version is non-cyclical.
- */
-for ( var i=0; i<colors.length; ++i ) {
-  var R = i<256? i : 255;
-  var G = i<256? i : 255;
-  var B = i<256? i : 255;
-  var A = 255;
-  colors[i] = [R, G, B, A];
-}
-
-// Whether to reload canvas size, etc.
-var reinit = true;
-
-window.onresize = function(event)
-{
-  // reinit dimentions on window resize
-  reinit = true;
-}
-
 function adjustAspectRatio(xRange, yRange, canvas)
 {
-  /*
-   * Adjust aspect ratio
-   */
   var ratio = Math.abs(xRange[1]-xRange[0]) / Math.abs(yRange[1]-yRange[0]);
   var sratio = canvas.width/canvas.height;
 
@@ -125,21 +93,24 @@ function adjustAspectRatio(xRange, yRange, canvas)
   }
 }
 
+/*
+ * Render the Mandelbrot set
+ */
 function draw(lookAt, zoom)
 {
-  if ( reinit ) {
-    canvas = $('canvasMandelbrot');
-    ctx = canvas.getContext('2d');
+  if ( reInitCanvas ) {
+    reInitCanvas = false;
 
+    canvas = $('canvasMandelbrot');
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
-    //canvas.width = 640; canvas.height = 480;
 
+    ctx = canvas.getContext('2d');
     img = ctx.createImageData(canvas.width, 1);
-    reinit = false;
   }
 
-  $('zoom').innerHTML = 1.0/zoom;
+
+  $('zoom').innerHTML = 1.0 / zoom;
 
   var steps = parseInt($('steps').value);
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
@@ -254,3 +225,62 @@ function draw(lookAt, zoom)
   // Start rendering in background
   setTimeout(render);
 }
+
+function main()
+{
+  $('zoom').innerHTML = 1.0/zoom;
+
+  /*
+   * Enable zooming (currently, the zooming is inexact!)
+   */
+  if ( useZoom ) {
+    $('canvasMandelbrot').onclick = function(event)
+    {
+      var x = event.clientX;
+      var y = event.clientY;
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+
+      x /= (0.5 + (canvas.width-1));
+      x = xRange[0] + x*(xRange[1] - xRange[0]);
+
+      y /= (0.5 + (canvas.height-1));
+      y = yRange[0] + y*(yRange[1] - yRange[0]);
+
+      lookAt = [x, y];
+      zoom *= 0.5;
+      draw(lookAt, zoom);
+    }
+  }
+
+  if ( !useHSV ) {
+    /*
+     * Color table can be any length, but should be
+     * cyclical because of the modulus operation.
+     */
+    colors = new Array(512);
+
+    /*
+     * Simple calculation of the color palette.
+     * This version is non-cyclical.
+     */
+    for ( var i=0; i<colors.length; ++i ) {
+      var R = i<256? i : 255;
+      var G = i<256? i : 255;
+      var B = i<256? i : 255;
+      var A = 255;
+      colors[i] = [R, G, B, A];
+    }
+  }
+
+  /*
+   * When resizing the window, be sure to update
+   * all the canvas stuff.
+   */
+  window.onresize = function(event)
+  {
+    reInitCanvas = true;
+  }
+}
+
+main();
