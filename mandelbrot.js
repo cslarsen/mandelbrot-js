@@ -19,9 +19,9 @@ var xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
 var yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
 var interiorColor = [0, 0, 0, 255];
 var reInitCanvas = true; // Whether to reload canvas size, etc
-var useHSV = false;
 var useZoom = true;
 var colors = [[0,0,0,0]];
+var pickColor = pickColorGrayscale;
 
 /*
  * Just a shorthand function: Fetch given element, jQuery-style
@@ -182,16 +182,7 @@ function draw(lookAt, zoom)
         if ( isNaN(v) ) v = 0;
         if ( !isFinite(v) ) v = steps;
 
-        if ( useHSV ) {
-          v = Math.floor(v) % 360;
-          color = hsv_to_rgb(v, 1.0, 1.0);
-        } else {
-          v = Math.abs(colors.length*v/steps);
-          color = colors[Math.floor(v) % colors.length];
-        }
-
-        // add alpha
-        color.push(255);
+        color = pickColor(v, steps);
       }
 
       img.data[off++] = color[0];
@@ -226,6 +217,19 @@ function draw(lookAt, zoom)
   setTimeout(render);
 }
 
+function pickColorHSV(v, steps)
+{
+  var c = hsv_to_rgb(Math.floor(v) % 360, 1.0, 1.0);
+  c.push(255); // alpha
+  return c;
+}
+
+function pickColorGrayscale(v, steps)
+{
+  v = Math.floor(Math.abs(255.0*v/steps));
+  return [v, v, v, 255];
+}
+
 function main()
 {
   $('zoom').innerHTML = 1.0/zoom;
@@ -250,26 +254,6 @@ function main()
       lookAt = [x, y];
       zoom *= 0.5;
       draw(lookAt, zoom);
-    }
-  }
-
-  if ( !useHSV ) {
-    /*
-     * Color table can be any length, but should be
-     * cyclical because of the modulus operation.
-     */
-    colors = new Array(512);
-
-    /*
-     * Simple calculation of the color palette.
-     * This version is non-cyclical.
-     */
-    for ( var i=0; i<colors.length; ++i ) {
-      var R = i<256? i : 255;
-      var G = i<256? i : 255;
-      var B = i<256? i : 255;
-      var A = 255;
-      colors[i] = [R, G, B, A];
     }
   }
 
