@@ -75,22 +75,15 @@ function hsv_to_rgb(h, s, v)
 
 /*
  * Adjust aspect ratio based on plot ranges and
- * canvs dimensions.
+ * canvas dimensions.
  */
 function adjustAspectRatio(xRange, yRange, canvas)
 {
   var ratio = Math.abs(xRange[1]-xRange[0]) / Math.abs(yRange[1]-yRange[0]);
   var sratio = canvas.width/canvas.height;
-
-  if ( sratio > ratio ) {
-    var f = sratio/ratio;
-    xRange[1] *= f;
-    xRange[0] *= f;
-  } else if ( sratio < ratio ) {
-    var f = ratio/sratio;
-    yRange[1] *= f;
-    yRange[0] *= f;
-  }
+  var f = sration>ratio? sratio/ratio : ratio/sratio;
+  xRange[1] *= f;
+  xRange[0] *= f;
 }
 
 /*
