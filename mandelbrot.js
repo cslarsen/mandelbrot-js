@@ -13,11 +13,11 @@
 /*
  * Global variables:
  */
-var lookAt = [-0.6, 0];
 var zoomStart = 3.4;
-var zoom = zoomStart;
-var xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
-var yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
+var zoom = [zoomStart, zoomStart];
+var lookAt = [-0.6, 0];
+var xRange = [0, 0];
+var yRange = [0, 0];
 var interiorColor = [0, 0, 0, 255];
 var reInitCanvas = true; // Whether to reload canvas size, etc
 var useZoom = true;
@@ -85,11 +85,27 @@ function adjustAspectRatio(xRange, yRange, canvas)
     var xf = sratio/ratio;
     xRange[0] *= xf;
     xRange[1] *= xf;
+      zoom[0] *= xf;
   } else {
     var yf = ratio/sratio;
     yRange[0] *= yf;
     yRange[1] *= yf;
+      zoom[1] *= yf;
   }
+}
+
+function precision(number, decimals)
+{
+  var pow = Math.pow;
+  var floor = Math.floor;
+  return floor(pow(10.0, decimals)*number)/floor(10, decimals);
+}
+
+function updateGUI()
+{
+  $('bounds').innerHTML =
+    "x=(" + precision(xRange[0], 2) + ", " + precision(xRange[1], 2) + ") " +
+    "y=(" + precision(yRange[0], 2) + ", " + precision(yRange[1], 2) + ")";
 }
 
 /*
@@ -97,6 +113,11 @@ function adjustAspectRatio(xRange, yRange, canvas)
  */
 function draw(lookAt, zoom, pickColor)
 {
+  if ( lookAt === null ) lookAt = [-0.6, 0];
+  if ( zoom === null ) zoom = [zoomStart, zoomStart];
+  xRange = [lookAt[0]-zoom[0]/2, lookAt[0]+zoom[0]/2];
+  yRange = [lookAt[1]-zoom[1]/2, lookAt[1]+zoom[1]/2];
+
   if ( reInitCanvas ) {
     reInitCanvas = false;
 
@@ -106,22 +127,15 @@ function draw(lookAt, zoom, pickColor)
 
     ctx = canvas.getContext('2d');
     img = ctx.createImageData(canvas.width, 1);
+
+    adjustAspectRatio(xRange, yRange, canvas);
   }
 
-  $('zoom').innerHTML = 1.0 / (zoom/zoomStart);
+  updateGUI();
 
   var steps = parseInt($('steps').value, 10);
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
 
-  /*
-   * Plot rectangle in the complex plane
-   */
-  if ( lookAt === null ) lookAt = [-0.6, 0];
-  if ( zoom === null ) zoom = 2.0;
-  xRange = [lookAt[0]-zoom/2, lookAt[0]+zoom/2];
-  yRange = [lookAt[1]-zoom/2, lookAt[1]+zoom/2];
-
-  adjustAspectRatio(xRange, yRange, canvas);
 
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
@@ -226,7 +240,7 @@ function pickColorGrayscale(v, steps)
 
 function main()
 {
-  $('zoom').innerHTML = 1.0/(zoom/zoomStart);
+  updateGUI();
 
   /*
    * Enable zooming (currently, the zooming is inexact!)
@@ -239,14 +253,16 @@ function main()
       var w = window.innerWidth;
       var h = window.innerHeight;
 
-      x /= (0.5 + (canvas.width-1));
-      x = xRange[0] + x*(xRange[1] - xRange[0]);
+      var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
+      x = xRange[0] + x*dx;
 
-      y /= (0.5 + (canvas.height-1));
-      y = yRange[0] + y*(yRange[1] - yRange[0]);
+      var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
+      y = yRange[0] + y*dy;
 
       lookAt = [x, y];
-      zoom *= 0.5;
+      zoom[0] *= 0.5;
+      zoom[1] *= 0.5;
+
       draw(lookAt, zoom, getColorPicker());
     };
   }
