@@ -175,10 +175,6 @@ function draw(lookAt, zoom, pickColor)
          */
         var v = 5 + n - logHalfBase - Math.log(Math.log(Tr+Ti))*logBase;
 
-        // then normalize for number of colors
-        if ( isNaN(v) ) v = 0;
-        if ( !isFinite(v) ) v = steps;
-
         color = pickColor(v, steps);
       }
 
