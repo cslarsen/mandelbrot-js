@@ -14,7 +14,8 @@
  * Global variables:
  */
 var lookAt = [-0.6, 0];
-var zoom = 3.4;
+var zoomStart = 3.4;
+var zoom = zoomStart;
 var xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
 var yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
 var interiorColor = [0, 0, 0, 255];
@@ -107,7 +108,7 @@ function draw(lookAt, zoom, pickColor)
     img = ctx.createImageData(canvas.width, 1);
   }
 
-  $('zoom').innerHTML = 1.0 / zoom;
+  $('zoom').innerHTML = 1.0 / (zoom/zoomStart);
 
   var steps = parseInt($('steps').value, 10);
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
@@ -225,7 +226,7 @@ function pickColorGrayscale(v, steps)
 
 function main()
 {
-  $('zoom').innerHTML = 1.0/zoom;
+  $('zoom').innerHTML = 1.0/(zoom/zoomStart);
 
   /*
    * Enable zooming (currently, the zooming is inexact!)
