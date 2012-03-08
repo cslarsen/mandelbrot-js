@@ -220,7 +220,7 @@ function pickColorHSV(v, steps)
 
 function pickColorGrayscale(v, steps)
 {
-  v = Math.floor(Math.abs(512*v/steps)) % 512;
+  v = Math.floor(512.0*v/steps) % 512;
   return [v, v, v, 255];
 }
 
