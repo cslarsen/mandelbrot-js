@@ -81,9 +81,15 @@ function adjustAspectRatio(xRange, yRange, canvas)
 {
   var ratio = Math.abs(xRange[1]-xRange[0]) / Math.abs(yRange[1]-yRange[0]);
   var sratio = canvas.width/canvas.height;
-  var f = sration>ratio? sratio/ratio : ratio/sratio;
-  xRange[1] *= f;
-  xRange[0] *= f;
+  if ( sratio>ratio ) {
+    var f = sratio/ratio;
+    xRange[0] *= f;
+    xRange[1] *= f;
+  } else {
+    var f = ratio/sratio;
+    yRange[0] *= f;
+    yRange[1] *= f;
+  }
 }
 
 /*
@@ -102,17 +108,16 @@ function draw(lookAt, zoom)
     img = ctx.createImageData(canvas.width, 1);
   }
 
-
   $('zoom').innerHTML = 1.0 / zoom;
 
-  var steps = parseInt($('steps').value);
+  var steps = parseInt($('steps').value, 10);
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
 
   /*
    * Plot rectangle in the complex plane
    */
-  if ( lookAt == null ) lookAt = [-0.6, 0];
-  if ( zoom == null ) zoom = 2.0;
+  if ( lookAt === null ) lookAt = [-0.6, 0];
+  if ( zoom === null ) zoom = 2.0;
   xRange = [lookAt[0]-zoom/2, lookAt[0]+zoom/2];
   yRange = [lookAt[1]-zoom/2, lookAt[1]+zoom/2];
 
@@ -201,7 +206,7 @@ function draw(lookAt, zoom)
     $('renderTime').innerHTML = elapsedMS/1000.0;
     $('renderSpeed').innerHTML = scaled(Math.floor(pixels/elapsedMS));
     $('submitButton').disabled = false;
-  };
+  }
 
   // Disallow redrawing while rendering
   $('submitButton').disabled = true;
@@ -247,7 +252,7 @@ function main()
       lookAt = [x, y];
       zoom *= 0.5;
       draw(lookAt, zoom);
-    }
+    };
   }
 
   /*
@@ -257,7 +262,7 @@ function main()
   window.onresize = function(event)
   {
     reInitCanvas = true;
-  }
+  };
 }
 
 main();
