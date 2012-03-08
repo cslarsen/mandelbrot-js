@@ -126,7 +126,7 @@ function draw(lookAt, zoom, pickColor)
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
 
-  function drawLine(Ci, off, Cr_init, Cr_step, pixels)
+  function drawLine(Ci, off, Cr_init, Cr_step)
   {
     var Cr = Cr_init;
     var logBase = 1.0 / Math.log(2.0);
