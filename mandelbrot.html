@@ -30,6 +30,13 @@
       #bottom a { color: #666; }
       #bottom a:hover { color: #FF3B03; }
 
+      select {
+        background-color: transparent;
+        color: #ccc;
+        border: none;
+        font-size: 10pt;
+      }
+
       #canvasMandelbrot {
         background-color: black;
         position: absolute;
@@ -89,7 +96,7 @@
       </div>
       </p>
       </header>
-        <form action="javascript:draw(lookAt, zoom, pickColorGrayscale);">
+        <form action="javascript:draw(lookAt, zoom, getColorPicker());">
           <table>
           <tr>
             <td>Rendering time</td>
@@ -115,6 +122,15 @@
           <tr>
             <td>Zoom</td>
             <td><span id="zoom"></span></td>
+          </tr>
+          <tr>
+            <td>Color scheme</td>
+            <td>
+              <select id="colorScheme">
+                <option value="pickColorGrayscale">Grayscale mod 512</option>
+                <option value="pickColorHSV">HSV</option>
+              </select>
+            </td>
           </tr>
           <tr>
             <td colspan="2">&nbsp;</td>
@@ -150,6 +166,13 @@
         if ( e ) {
           e.focus();
         }
+      }
+
+      function getColorPicker()
+      {
+        var p = $("colorScheme").value;
+        if ( p == "pickColorHSV" ) return pickColorHSV;
+        return pickColorGrayscale;
       }
     </script>
   </body>

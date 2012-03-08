@@ -82,13 +82,13 @@ function adjustAspectRatio(xRange, yRange, canvas)
   var ratio = Math.abs(xRange[1]-xRange[0]) / Math.abs(yRange[1]-yRange[0]);
   var sratio = canvas.width/canvas.height;
   if ( sratio>ratio ) {
-    var f = sratio/ratio;
-    xRange[0] *= f;
-    xRange[1] *= f;
+    var xf = sratio/ratio;
+    xRange[0] *= xf;
+    xRange[1] *= xf;
   } else {
-    var f = ratio/sratio;
-    yRange[0] *= f;
-    yRange[1] *= f;
+    var yf = ratio/sratio;
+    yRange[0] *= yf;
+    yRange[1] *= yf;
   }
 }
 
@@ -247,7 +247,7 @@ function main()
 
       lookAt = [x, y];
       zoom *= 0.5;
-      draw(lookAt, zoom, pickColorGrayscale);
+      draw(lookAt, zoom, getColorPicker());
     };
   }
 
