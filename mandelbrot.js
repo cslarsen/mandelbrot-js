@@ -21,7 +21,6 @@ var interiorColor = [0, 0, 0, 255];
 var reInitCanvas = true; // Whether to reload canvas size, etc
 var useZoom = true;
 var colors = [[0,0,0,0]];
-var pickColor = pickColorGrayscale;
 
 /*
  * Just a shorthand function: Fetch given element, jQuery-style
@@ -95,7 +94,7 @@ function adjustAspectRatio(xRange, yRange, canvas)
 /*
  * Render the Mandelbrot set
  */
-function draw(lookAt, zoom)
+function draw(lookAt, zoom, pickColor)
 {
   if ( reInitCanvas ) {
     reInitCanvas = false;
@@ -251,7 +250,7 @@ function main()
 
       lookAt = [x, y];
       zoom *= 0.5;
-      draw(lookAt, zoom);
+      draw(lookAt, zoom, pickColorGrayscale);
     };
   }
 
