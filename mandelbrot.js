@@ -131,7 +131,7 @@ function draw(lookAt, zoom, pickColor)
     var logBase = 1.0 / Math.log(2.0);
     var logHalfBase = Math.log(0.5)*logBase;
 
-    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step ) {
+    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
       var Zr = 0;
       var Zi = 0;
       var Tr = 0;
@@ -182,10 +182,10 @@ function draw(lookAt, zoom, pickColor)
         color = pickColor(v, steps);
       }
 
-      img.data[off++] = color[0];
-      img.data[off++] = color[1];
-      img.data[off++] = color[2];
-      img.data[off++] = color[3];
+      img.data[off  ] = color[0];
+      img.data[off+1] = color[1];
+      img.data[off+2] = color[2];
+      img.data[off+3] = color[3];
     }
   }
 
