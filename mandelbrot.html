@@ -23,6 +23,13 @@
         text-shadow: 0px 1px 0px rgb(40, 40, 40);
       }
 
+      a { color: #ccc; text-decoration: none; }
+      a:hover { color: #FF3B03; }
+
+      #bottom { color: #666; }
+      #bottom a { color: #666; }
+      #bottom a:hover { color: #FF3B03; }
+
       #canvasMandelbrot {
         background-color: black;
         position: absolute;
@@ -117,6 +124,15 @@
           </tr>
           </table>
         </form>
+
+        <hr/>
+
+        <div id="bottom">
+          <small>
+            Made by <a href="http://csl.sublevel3.org">Christian Stigen Larsen</a> &mdash;
+            <a href="https://github.com/cslarsen/mandelbrot-js">Code on Github</a>
+          </small>
+        </div>
     </div>
 
     <div id="canvasContainer">
