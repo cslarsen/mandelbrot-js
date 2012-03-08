@@ -14,7 +14,7 @@
  * Global variables:
  */
 var lookAt = [-0.6, 0];
-var zoom = 3.0;
+var zoom = 3.4;
 var xRange = [lookAt[0]-zoom, lookAt[0]+zoom];
 var yRange = [lookAt[1]-zoom, lookAt[1]+zoom];
 var interiorColor = [0, 0, 0, 255];
@@ -224,7 +224,7 @@ function pickColorHSV(v, steps)
 
 function pickColorGrayscale(v, steps)
 {
-  v = Math.floor(Math.abs(255.0*v/steps));
+  v = Math.floor(Math.abs(512*v/steps)) % 512;
   return [v, v, v, 255];
 }
 
