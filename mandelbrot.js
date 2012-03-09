@@ -183,7 +183,7 @@ function draw(lookAt, zoom, pickColor)
   {
     var start  = (new Date).getTime();
     var lastUpdate = start;
-    var updateTimeout = 500.0; // ms
+    var updateTimeout = 250.0; // ms
     var pixels = 0;
     var y = yRange[0];
     var sy = 0;
