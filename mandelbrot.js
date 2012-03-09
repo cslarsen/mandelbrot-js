@@ -51,6 +51,7 @@ function scaled(number)
  */
 function hsv_to_rgb(h, s, v)
 {
+  if ( v > 1.0 ) v = 1.0;
   var hp = h/60.0;
   var c = v * s;
   var x = c*(1 - Math.abs((hp % 2) - 1));
