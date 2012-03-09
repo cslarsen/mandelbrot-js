@@ -130,6 +130,7 @@
                 <option value="pickColorGrayscale">Grayscale mod 512</option>
                 <option value="pickColorHSV1">HSV #1</option>
                 <option value="pickColorHSV2">HSV #2</option>
+                <option value="pickColorGrayscale2">Grayscale #2</option>
               </select>
             </td>
           </tr>
@@ -174,6 +175,7 @@
         var p = $("colorScheme").value;
         if ( p == "pickColorHSV1" ) return pickColorHSV1;
         if ( p == "pickColorHSV2" ) return pickColorHSV2;
+        if ( p == "pickColorGrayscale2" ) return pickColorGrayscale2;
         return pickColorGrayscale;
       }
     </script>

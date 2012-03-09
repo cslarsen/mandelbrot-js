@@ -143,8 +143,6 @@ function draw(lookAt, zoom, pickColor)
   function drawLine(Ci, off, Cr_init, Cr_step)
   {
     var Cr = Cr_init;
-    var logBase = 1.0 / Math.log(2.0);
-    var logHalfBase = Math.log(0.5)*logBase;
 
     for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
       var Zr = 0;
@@ -171,26 +169,7 @@ function draw(lookAt, zoom, pickColor)
         Ti = Zi * Zi;
       }
 
-      /*
-       * Did equation converge?  Then this is an interior, and we'll
-       * simply paint it black.
-       */
-      var color = interiorColor;
-
-      // Did it diverge? Then we've got an exterior
-      if ( n != steps ) {
-        // Instead of using RGB[i] directly, calculate smooth coloring:
-
-        /*
-         * Original smoothing equation is
-         *
-         * var v = 1 + n - Math.log(Math.log(Math.sqrt(Zr*Zr+Zi*Zi)))/Math.log(2.0);
-         *
-         * but can be simplified using some elementary logarithm rules to
-         */
-        var v = 5 + n - logHalfBase - Math.log(Math.log(Tr+Ti))*logBase;
-        color = pickColor(v, steps);
-      }
+      var color = pickColor(steps, n, Tr, Ti);
 
       img.data[off  ] = color[0];
       img.data[off+1] = color[1];
@@ -224,24 +203,62 @@ function draw(lookAt, zoom, pickColor)
   setTimeout(render);
 }
 
-function pickColorHSV1(v, steps)
+// Some constants used with smoothColor
+var logBase = 1.0 / Math.log(2.0);
+var logHalfBase = Math.log(0.5)*logBase;
+
+function smoothColor(steps, n, Tr, Ti)
 {
-  var c = hsv_to_rgb(360.0*v/steps, 1.0, 1.0);
+  /*
+   * Original smoothing equation is
+   *
+   * var v = 1 + n - Math.log(Math.log(Math.sqrt(Zr*Zr+Zi*Zi)))/Math.log(2.0);
+   *
+   * but can be simplified using some elementary logarithm rules to
+   */
+  return 5 + n - logHalfBase - Math.log(Math.log(Tr+Ti))*logBase;
+}
+
+function pickColorHSV1(steps, n, Tr, Ti)
+{
+  if ( n == steps ) // converged?
+    return interiorColor;
+
+  var v = smoothColor(steps, n, Tr, Ti);
+  c = hsv_to_rgb(360.0*v/steps, 1.0, 1.0);
   c.push(255); // alpha
   return c;
 }
 
-function pickColorHSV2(v, steps)
+function pickColorHSV2(steps, n, Tr, Ti)
 {
+  if ( n == steps ) // converged?
+    return interiorColor;
+
+  var v = smoothColor(steps, n, Tr, Ti);
   var c = hsv_to_rgb(360.0*v/steps, 1.0, 5.0*v/steps);
   c.push(255); // alpha
   return c;
 }
 
-function pickColorGrayscale(v, steps)
+function pickColorGrayscale(steps, n, Tr, Ti)
 {
+  if ( n == steps ) // converged?
+    return interiorColor;
+
+  var v = smoothColor(steps, n, Tr, Ti);
   v = Math.floor(512.0*v/steps) % 512;
   return [v, v, v, 255];
+}
+
+function pickColorGrayscale2(steps, n, Tr, Ti)
+{
+  if ( n == steps ) { // converged?
+    var c = 255 - Math.floor(255.0*Math.sqrt(Tr+Ti)) % 255;
+    return [c, c, c, 255];
+  }
+
+  return pickColorGrayscale(steps, n, Tr, Ti);
 }
 
 function main()
