@@ -277,7 +277,8 @@ function pickColorGrayscale(steps, n, Tr, Ti)
     return interiorColor;
 
   var v = smoothColor(steps, n, Tr, Ti);
-  v = Math.floor(512.0*v/steps) % 512;
+  v = Math.floor(512.0*v/steps);
+  if ( v > 255 ) v = 255;
   return [v, v, v, 255];
 }
 
@@ -285,6 +286,8 @@ function pickColorGrayscale2(steps, n, Tr, Ti)
 {
   if ( n == steps ) { // converged?
     var c = 255 - Math.floor(255.0*Math.sqrt(Tr+Ti)) % 255;
+    if ( c < 0 ) c = 0;
+    if ( c > 255 ) c = 255;
     return [c, c, c, 255];
   }
 
