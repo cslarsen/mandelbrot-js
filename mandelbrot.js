@@ -236,7 +236,7 @@ function pickColorHSV2(steps, n, Tr, Ti)
     return interiorColor;
 
   var v = smoothColor(steps, n, Tr, Ti);
-  var c = hsv_to_rgb(360.0*v/steps, 1.0, 5.0*v/steps);
+  var c = hsv_to_rgb(360.0*v/steps, 1.0, 10.0*v/steps);
   c.push(255); // alpha
   return c;
 }
