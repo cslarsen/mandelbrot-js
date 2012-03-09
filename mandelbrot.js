@@ -189,7 +189,6 @@ function draw(lookAt, zoom, pickColor)
          * but can be simplified using some elementary logarithm rules to
          */
         var v = 5 + n - logHalfBase - Math.log(Math.log(Tr+Ti))*logBase;
-
         color = pickColor(v, steps);
       }
 
@@ -225,9 +224,16 @@ function draw(lookAt, zoom, pickColor)
   setTimeout(render);
 }
 
-function pickColorHSV(v, steps)
+function pickColorHSV1(v, steps)
 {
-  var c = hsv_to_rgb(Math.floor(v) % 360, 1.0, 1.0);
+  var c = hsv_to_rgb(360.0*v/steps, 1.0, 1.0);
+  c.push(255); // alpha
+  return c;
+}
+
+function pickColorHSV2(v, steps)
+{
+  var c = hsv_to_rgb(360.0*v/steps, 1.0, 5.0*v/steps);
   c.push(255); // alpha
   return c;
 }
