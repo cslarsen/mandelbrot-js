@@ -178,29 +178,58 @@ function draw(lookAt, zoom, pickColor)
     }
   }
 
-  function render() {
+  function render()
+  {
     var start  = (new Date).getTime();
+    var lastUpdate = start;
+    var updateTimeout = 500.0; // ms
     var pixels = 0;
     var y = yRange[0];
+    var sy = 0;
 
-    for ( var sy = 0; sy < canvas.height; ++sy ) {
+    var scanline = function()
+    {
       drawLine(y, 0, xRange[0], dx);
       y += dy;
       pixels += canvas.width;
       ctx.putImageData(img, 0, sy);
-    }
 
-    var elapsedMS = (new Date).getTime() - start;
-    $('renderTime').innerHTML = elapsedMS/1000.0;
-    $('renderSpeed').innerHTML = scaled(Math.floor(pixels/elapsedMS));
-    $('submitButton').disabled = false;
+      var now = (new Date).getTime();
+      var elapsedMS = now - start;
+
+      $('renderTime').innerHTML = elapsedMS/1000.0;
+      $('renderSpeed').innerHTML = scaled(Math.floor(pixels/elapsedMS));
+
+      /*
+       * Javascript is inherently single-threaded, and the way
+       * you yield thread control back to the browser is MYSTERIOUS.
+       *
+       * People seem to use setTimeout() to yield, which lets us
+       * make sure the canvas is updated, so that we can do animations.
+       *
+       * But if we do that for every scanline, it will take 100x longer
+       * to render everything, because of overhead.  So therefore, we'll
+       * do something in between.
+       */
+      if ( sy++ < canvas.height ) {
+        if ( (now - lastUpdate) >= updateTimeout ) {
+          // yield control back to browser, so that canvas is updated
+          lastUpdate = now;
+          setTimeout(scanline);
+        } else
+          scanline();
+      } else {
+        // finished rendering
+        $('submitButton').disabled = false;
+      }
+    };
+
+    // Disallow redrawing while rendering
+    $('submitButton').disabled = true;
+    setTimeout(scanline);
   }
 
-  // Disallow redrawing while rendering
-  $('submitButton').disabled = true;
-
-  // Start rendering in background
-  setTimeout(render);
+  render();
 }
 
 // Some constants used with smoothColor
@@ -271,6 +300,11 @@ function main()
   if ( useZoom ) {
     $('canvasMandelbrot').onclick = function(event)
     {
+      // disallow zooming while rendering
+      // (or; you could just cancel rendering and zoom instead)
+      if ( $('submitButton').disabled == true )
+        return;
+
       var x = event.clientX;
       var y = event.clientY;
       var w = window.innerWidth;
