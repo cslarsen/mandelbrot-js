@@ -271,6 +271,23 @@ function pickColorHSV2(steps, n, Tr, Ti)
   return c;
 }
 
+function pickColorHSV3(steps, n, Tr, Ti)
+{
+  if ( n == steps ) // converged?
+    return interiorColor;
+
+  var v = smoothColor(steps, n, Tr, Ti);
+  var c = hsv_to_rgb(360.0*v/steps, 1.0, 10.0*v/steps);
+
+  // swap red and blue
+  var t = c[0];
+  c[0] = c[2];
+  c[2] = t;
+
+  c.push(255); // alpha
+  return c;
+}
+
 function pickColorGrayscale(steps, n, Tr, Ti)
 {
   if ( n == steps ) // converged?
