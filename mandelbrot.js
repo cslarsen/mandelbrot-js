@@ -321,8 +321,14 @@ function main()
       y = yRange[0] + y*dy;
 
       lookAt = [x, y];
-      zoom[0] *= 0.5;
-      zoom[1] *= 0.5;
+
+      if ( event.shiftKey ) {
+        zoom[0] /= 0.5;
+        zoom[1] /= 0.5;
+      } else {
+        zoom[0] *= 0.5;
+        zoom[1] *= 0.5;
+      }
 
       draw(lookAt, zoom, getColorPicker());
     };
