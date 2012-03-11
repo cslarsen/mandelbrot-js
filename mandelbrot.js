@@ -112,7 +112,7 @@ function updateGUI()
 /*
  * Render the Mandelbrot set
  */
-function draw(lookAt, zoom, pickColor)
+function draw(lookAt, zoom, pickColor, superSamples)
 {
   if ( lookAt === null ) lookAt = [-0.6, 0];
   if ( zoom === null ) zoom = [zoomStart, zoomStart];
@@ -136,16 +136,12 @@ function draw(lookAt, zoom, pickColor)
 
   var steps = parseInt($('steps').value, 10);
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
-
-
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
+  var Ci_step = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
 
-  function drawLine(Ci, off, Cr_init, Cr_step)
+  function calc(Cr, Ci)
   {
-    var Cr = Cr_init;
-
-    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
       var Zr = 0;
       var Zi = 0;
       var Tr = 0;
@@ -170,12 +166,47 @@ function draw(lookAt, zoom, pickColor)
         Ti = Zi * Zi;
       }
 
-      var color = pickColor(steps, n, Tr, Ti);
+      return [n, Tr, Ti];
+  }
+
+  function addRGB(v, w)
+  {
+    v[0] += w[0];
+    v[1] += w[1];
+    v[2] += w[2];
+    v[3] += w[3];
+    return v;
+  }
+
+  function divRGB(v, div)
+  {
+    v[0] /= div;
+    v[1] /= div;
+    v[2] /= div;
+    v[3] /= div;
+    return v;
+  }
+
+  function drawLine(Ci, off, Cr_init, Cr_step)
+  {
+    var Cr = Cr_init;
+
+    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
+      var color = [0, 0, 0, 255];
+
+      for ( var s=0; s<superSamples; ++s ) {
+        var rx = Math.random()*Cr_step;
+        var ry = Math.random()*Ci_step;
+        var p = calc(Cr - rx/2, Ci - ry/2);
+        color = addRGB(color, pickColor(steps, p[0], p[1], p[2]));
+      }
+
+      color = divRGB(color, superSamples);
 
       img.data[off  ] = color[0];
       img.data[off+1] = color[1];
       img.data[off+2] = color[2];
-      img.data[off+3] = color[3];
+      img.data[off+3] = 255;
     }
   }
 
@@ -183,15 +214,15 @@ function draw(lookAt, zoom, pickColor)
   {
     var start  = (new Date).getTime();
     var lastUpdate = start;
-    var updateTimeout = 250.0; // ms
+    var updateTimeout = 500.0; // ms
     var pixels = 0;
-    var y = yRange[0];
+    var Ci = yRange[0];
     var sy = 0;
 
     var scanline = function()
     {
-      drawLine(y, 0, xRange[0], dx);
-      y += dy;
+      drawLine(Ci, 0, xRange[0], dx);
+      Ci += Ci_step;
       pixels += canvas.width;
       ctx.putImageData(img, 0, sy);
 
@@ -347,7 +378,7 @@ function main()
         zoom[1] *= 0.5;
       }
 
-      draw(lookAt, zoom, getColorPicker());
+      draw(lookAt, zoom, getColorPicker(), getSamples());
     };
   }
 

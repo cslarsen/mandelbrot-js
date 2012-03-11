@@ -95,7 +95,7 @@
       </div>
       </p>
       </header>
-        <form action="javascript:draw(lookAt, zoom, getColorPicker());">
+        <form action="javascript:draw(lookAt, zoom, getColorPicker(), getSamples());">
           <table>
           <tr>
             <td>Rendering time</td>
@@ -135,6 +135,10 @@
             </td>
           </tr>
           <tr>
+            <td>Supersamples</td>
+            <td><input type="text" id="superSamples" value="1" /></td>
+          </tr>
+          <tr>
             <td colspan="2">&nbsp;</td>
           </tr>
           <tr>
@@ -169,10 +173,8 @@
     <script type="text/javascript">
       function focusOnSubmit()
       {
-        var e = document.getElementById('submitButton');
-        if ( e ) {
-          e.focus();
-        }
+        var e = $('submitButton');
+        if ( e ) e.focus();
       }
 
       function getColorPicker()
@@ -183,6 +185,12 @@
         if ( p == "pickColorHSV3" ) return pickColorHSV3;
         if ( p == "pickColorGrayscale2" ) return pickColorGrayscale2;
         return pickColorGrayscale;
+      }
+
+      function getSamples()
+      {
+        var i = parseInt($('superSamples').value);
+        return i<=0? 1 : i;
       }
     </script>
   </body>
