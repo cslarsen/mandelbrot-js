@@ -95,18 +95,12 @@ function adjustAspectRatio(xRange, yRange, canvas)
   }
 }
 
-function precision(number, decimals)
-{
-  var pow = Math.pow;
-  var floor = Math.floor;
-  return floor(pow(10.0, decimals)*number)/floor(10, decimals);
-}
-
 function updateGUI()
 {
-  $('bounds').innerHTML =
-    "x=(" + precision(xRange[0], 2) + ", " + precision(xRange[1], 2) + ") " +
-    "y=(" + precision(yRange[0], 2) + ", " + precision(yRange[1], 2) + ")";
+  $('x').innerHTML = lookAt[0];
+  $('y').innerHTML = lookAt[0];
+  $('z1').innerHTML = zoom[0];
+  $('z2').innerHTML = zoom[1];
 }
 
 /*
@@ -116,6 +110,7 @@ function draw(lookAt, zoom, pickColor, superSamples)
 {
   if ( lookAt === null ) lookAt = [-0.6, 0];
   if ( zoom === null ) zoom = [zoomStart, zoomStart];
+
   xRange = [lookAt[0]-zoom[0]/2, lookAt[0]+zoom[0]/2];
   yRange = [lookAt[1]-zoom[1]/2, lookAt[1]+zoom[1]/2];
 
