@@ -182,6 +182,8 @@ function draw(lookAt, zoom, pickColor)
   function render()
   {
     var start  = (new Date).getTime();
+    var startHeight = canvas.height;
+    var startWidth = canvas.width;
     var lastUpdate = start;
     var updateTimeout = 250.0; // ms
     var pixels = 0;
@@ -190,6 +192,7 @@ function draw(lookAt, zoom, pickColor)
 
     var scanline = function()
     {
+      if(startHeight != canvas.height || startWidth != canvas.width) { return; }
       drawLine(y, 0, xRange[0], dx);
       y += dy;
       pixels += canvas.width;
