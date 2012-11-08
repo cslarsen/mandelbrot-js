@@ -97,6 +97,9 @@ function adjustAspectRatio(xRange, yRange, canvas)
 
 function updateGUI()
 {
+  if ( $('x') === null )
+    return;
+
   $('x').innerHTML = lookAt[0];
   $('y').innerHTML = lookAt[0];
   $('z1').innerHTML = zoom[0];
