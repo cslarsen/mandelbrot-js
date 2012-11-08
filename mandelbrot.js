@@ -205,6 +205,18 @@ function draw(lookAt, zoom, pickColor, superSamples)
     }
   }
 
+  function drawSolidLine(y, color)
+  {
+    var off = y*canvas.width;
+
+    for ( var x=0; x<canvas.width; ++x, off += 4 ) {
+      img.data[off+0] = color[0];
+      img.data[off+1] = color[1];
+      img.data[off+2] = color[2];
+      img.data[off+3] = color[3];
+    }
+  }
+
   function render()
   {
     var start  = (new Date).getTime();
@@ -240,6 +252,10 @@ function draw(lookAt, zoom, pickColor, superSamples)
        */
       if ( sy++ < canvas.height ) {
         if ( (now - lastUpdate) >= updateTimeout ) {
+          // show the user where we're rendering
+          drawSolidLine(0, [255,59,3,255]);
+          ctx.putImageData(img, 0, sy);
+
           // yield control back to browser, so that canvas is updated
           lastUpdate = now;
           setTimeout(scanline);
