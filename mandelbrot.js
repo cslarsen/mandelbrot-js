@@ -95,27 +95,22 @@ function adjustAspectRatio(xRange, yRange, canvas)
   }
 }
 
-function precision(number, decimals)
-{
-  var pow = Math.pow;
-  var floor = Math.floor;
-  return floor(pow(10.0, decimals)*number)/floor(10, decimals);
-}
-
 function updateGUI()
 {
-  $('bounds').innerHTML =
-    "x=(" + precision(xRange[0], 2) + ", " + precision(xRange[1], 2) + ") " +
-    "y=(" + precision(yRange[0], 2) + ", " + precision(yRange[1], 2) + ")";
+  $('x').innerHTML = lookAt[0];
+  $('y').innerHTML = lookAt[0];
+  $('z1').innerHTML = zoom[0];
+  $('z2').innerHTML = zoom[1];
 }
 
 /*
  * Render the Mandelbrot set
  */
-function draw(lookAt, zoom, pickColor)
+function draw(lookAt, zoom, pickColor, superSamples)
 {
   if ( lookAt === null ) lookAt = [-0.6, 0];
   if ( zoom === null ) zoom = [zoomStart, zoomStart];
+
   xRange = [lookAt[0]-zoom[0]/2, lookAt[0]+zoom[0]/2];
   yRange = [lookAt[1]-zoom[1]/2, lookAt[1]+zoom[1]/2];
 
@@ -136,16 +131,12 @@ function draw(lookAt, zoom, pickColor)
 
   var steps = parseInt($('steps').value, 10);
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
-
-
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
+  var Ci_step = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
 
-  function drawLine(Ci, off, Cr_init, Cr_step)
+  function calc(Cr, Ci)
   {
-    var Cr = Cr_init;
-
-    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
       var Zr = 0;
       var Zi = 0;
       var Tr = 0;
@@ -170,9 +161,56 @@ function draw(lookAt, zoom, pickColor)
         Ti = Zi * Zi;
       }
 
-      var color = pickColor(steps, n, Tr, Ti);
+      return [n, Tr, Ti];
+  }
+
+  function addRGB(v, w)
+  {
+    v[0] += w[0];
+    v[1] += w[1];
+    v[2] += w[2];
+    v[3] += w[3];
+    return v;
+  }
+
+  function divRGB(v, div)
+  {
+    v[0] /= div;
+    v[1] /= div;
+    v[2] /= div;
+    v[3] /= div;
+    return v;
+  }
+
+  function drawLine(Ci, off, Cr_init, Cr_step)
+  {
+    var Cr = Cr_init;
+
+    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
+      var color = [0, 0, 0, 255];
+
+      for ( var s=0; s<superSamples; ++s ) {
+        var rx = Math.random()*Cr_step;
+        var ry = Math.random()*Ci_step;
+        var p = calc(Cr - rx/2, Ci - ry/2);
+        color = addRGB(color, pickColor(steps, p[0], p[1], p[2]));
+      }
+
+      color = divRGB(color, superSamples);
 
       img.data[off  ] = color[0];
+      img.data[off+1] = color[1];
+      img.data[off+2] = color[2];
+      img.data[off+3] = 255;
+    }
+  }
+
+  function drawSolidLine(y, color)
+  {
+    var off = y*canvas.width;
+
+    for ( var x=0; x<canvas.width; ++x, off += 4 ) {
+      img.data[off+0] = color[0];
       img.data[off+1] = color[1];
       img.data[off+2] = color[2];
       img.data[off+3] = color[3];
@@ -185,16 +223,16 @@ function draw(lookAt, zoom, pickColor)
     var startHeight = canvas.height;
     var startWidth = canvas.width;
     var lastUpdate = start;
-    var updateTimeout = 250.0; // ms
+    var updateTimeout = 500.0; // ms
     var pixels = 0;
-    var y = yRange[0];
+    var Ci = yRange[0];
     var sy = 0;
 
     var scanline = function()
     {
       if(startHeight != canvas.height || startWidth != canvas.width) { return; }
-      drawLine(y, 0, xRange[0], dx);
-      y += dy;
+      drawLine(Ci, 0, xRange[0], dx);
+      Ci += Ci_step;
       pixels += canvas.width;
       ctx.putImageData(img, 0, sy);
 
@@ -217,6 +255,10 @@ function draw(lookAt, zoom, pickColor)
        */
       if ( sy++ < canvas.height ) {
         if ( (now - lastUpdate) >= updateTimeout ) {
+          // show the user where we're rendering
+          drawSolidLine(0, [255,59,3,255]);
+          ctx.putImageData(img, 0, sy);
+
           // yield control back to browser, so that canvas is updated
           lastUpdate = now;
           setTimeout(scanline);
@@ -350,7 +392,7 @@ function main()
         zoom[1] *= 0.5;
       }
 
-      draw(lookAt, zoom, getColorPicker());
+      draw(lookAt, zoom, getColorPicker(), getSamples());
     };
   }
 
