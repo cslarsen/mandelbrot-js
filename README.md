@@ -3,6 +3,9 @@ Mandelbrot.js
 
 Vanilla Mandelbrot Set renderer in HTML5 canvas and javascript.
 
+This code running in action can be seen at
+http://csl.sublevel3.org/mandelbrot/
+
 Author
 ------
 Written by Christian Stigen Larsen
