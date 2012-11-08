@@ -223,7 +223,7 @@ function draw(lookAt, zoom, pickColor, superSamples)
     var startHeight = canvas.height;
     var startWidth = canvas.width;
     var lastUpdate = start;
-    var updateTimeout = 500.0; // ms
+    var updateTimeout = parseFloat($('updateTimeout').value);
     var pixels = 0;
     var Ci = yRange[0];
     var sy = 0;
