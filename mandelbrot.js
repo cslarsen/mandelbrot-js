@@ -272,7 +272,7 @@ function draw(lookAt, zoom, pickColor, superSamples)
 
     // Disallow redrawing while rendering
     $('submitButton').disabled = true;
-    setTimeout(scanline);
+    scanline();
   }
 
   render();
