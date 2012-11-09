@@ -240,10 +240,6 @@ function draw(lookAt, zoom, pickColor, superSamples)
       ctx.putImageData(img, 0, sy);
 
       var now = (new Date).getTime();
-      var elapsedMS = now - start;
-
-      $('renderTime').innerHTML = elapsedMS/1000.0;
-      $('renderSpeed').innerHTML = scaled(Math.floor(pixels/elapsedMS));
 
       /*
        * Javascript is inherently single-threaded, and the way
@@ -261,6 +257,11 @@ function draw(lookAt, zoom, pickColor, superSamples)
           // show the user where we're rendering
           drawSolidLine(0, [255,59,3,255]);
           ctx.putImageData(img, 0, sy);
+
+          // Update speed and time taken
+          var elapsedMS = now - start;
+          $('renderTime').innerHTML = elapsedMS/1000.0;
+          $('renderSpeed').innerHTML = scaled(Math.floor(pixels/elapsedMS));
 
           // yield control back to browser, so that canvas is updated
           lastUpdate = now;
