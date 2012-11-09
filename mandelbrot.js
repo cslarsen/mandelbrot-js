@@ -20,7 +20,7 @@ var xRange = [0, 0];
 var yRange = [0, 0];
 var interiorColor = [0, 0, 0, 255];
 var reInitCanvas = true; // Whether to reload canvas size, etc
-var useZoom = true;
+var dragToZoom = true;
 var colors = [[0,0,0,0]];
 var renderId = 0; // To zoom before current render is finished
 
@@ -76,8 +76,7 @@ function hsv_to_rgb(h, s, v)
 }
 
 /*
- * Adjust aspect ratio based on plot ranges and
- * canvas dimensions.
+ * Adjust aspect ratio based on plot ranges and canvas dimensions.
  */
 function adjustAspectRatio(xRange, yRange, canvas)
 {
@@ -113,6 +112,10 @@ function draw(lookAt, zoom, pickColor, superSamples)
     canvas = $('canvasMandelbrot');
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
+
+    ccanvas = $('canvasControls');
+    ccanvas.width  = window.innerWidth;
+    ccanvas.height = window.innerHeight;
 
     ctx = canvas.getContext('2d');
     img = ctx.createImageData(canvas.width, 1);
@@ -377,22 +380,117 @@ function main()
     window.location = canvas.toDataURL('image/png');
   };
 
+  if ( dragToZoom == true ) {
+    box = null;
+
+    $('canvasControls').onmousedown = function(e)
+    {
+      if ( box == null )
+        box = [e.clientX, e.clientY, 0, 0];
+    }
+
+    $('canvasControls').onmousemove = function(e)
+    {
+      if ( box != null ) {
+        var c = ccanvas.getContext('2d');
+        c.lineWidth = 1;
+
+        // clear out old box first
+        c.clearRect(0, 0, ccanvas.width, ccanvas.height);
+
+        // draw new box
+        c.strokeStyle = '#FF3B03';
+        box[2] = e.clientX;
+        box[3] = e.clientY;
+        c.strokeRect(box[0], box[1], box[2]-box[0], box[3]-box[1]);
+      }
+    }
+
+    var zoomOut = function() {
+      var x = event.clientX;
+      var y = event.clientY;
+
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+
+      var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
+      var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
+
+      x = xRange[0] + x*dx;
+      y = yRange[0] + y*dy;
+
+      lookAt = [x, y];
+
+      if ( event.shiftKey ) {
+        zoom[0] /= 0.5;
+        zoom[1] /= 0.5;
+      }
+
+      draw(lookAt, zoom, getColorPicker(), getSamples());
+    };
+
+    $('canvasControls').onmouseup = function(e)
+    {
+      if ( box != null ) {
+        // Zoom out?
+        if ( e.shiftKey ) {
+          box = null;
+          zoomOut();
+          return;
+        }
+
+        /*
+         * Cleaer entire canvas
+         */
+        var c = ccanvas.getContext('2d');
+        c.clearRect(0, 0, ccanvas.width, ccanvas.height);
+
+        /*
+         * Calculate new rectangle to render
+         */
+        var x = Math.min(box[0], box[2]) + Math.abs(box[0] - box[2]) / 2.0;
+        var y = Math.min(box[1], box[3]) + Math.abs(box[1] - box[3]) / 2.0;
+
+        var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
+        var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
+
+        x = xRange[0] + x*dx;
+        y = yRange[0] + y*dy;
+
+        lookAt = [x, y];
+
+        /*
+         * This whole code is such a mess ...
+         */
+
+        var xf = Math.abs(Math.abs(box[0]-box[2])/canvas.width);
+        var yf = Math.abs(Math.abs(box[1]-box[3])/canvas.height);
+
+        zoom[0] *= Math.max(xf, yf); // retain aspect ratio
+        zoom[1] *= Math.max(xf, yf);
+
+        box = null;
+        draw(lookAt, zoom, getColorPicker(), getSamples());
+      }
+    }
+  }
+
   /*
-   * Enable zooming (currently, the zooming is inexact!)
+   * Enable zooming (currently, the zooming is inexact!) Click to zoom;
+   * perfect to mobile phones, etc.
    */
-  if ( useZoom ) {
+  if ( dragToZoom == false ) {
     $('canvasMandelbrot').onclick = function(event)
     {
-      // Signal any current rendering to stop and wait for it
       var x = event.clientX;
       var y = event.clientY;
       var w = window.innerWidth;
       var h = window.innerHeight;
 
       var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
-      x = xRange[0] + x*dx;
-
       var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
+
+      x = xRange[0] + x*dx;
       y = yRange[0] + y*dy;
 
       lookAt = [x, y];
@@ -410,8 +508,7 @@ function main()
   }
 
   /*
-   * When resizing the window, be sure to update
-   * all the canvas stuff.
+   * When resizing the window, be sure to update all the canvas stuff.
    */
   window.onresize = function(event)
   {
