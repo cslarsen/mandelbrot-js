@@ -39,7 +39,7 @@ function scaled(number)
 {
   var unit = ["", "k", "M", "G", "T", "P", "E"];
   var mag = Math.ceil((1+Math.log(number)/Math.log(10))/3);
-  return "" + number/Math.pow(10, 3*(mag-1)) + unit[mag];
+  return "" + (number/Math.pow(10, 3*(mag-1))).toFixed(2) + unit[mag];
 }
 
 /*
@@ -287,7 +287,7 @@ function draw(lookAt, zoom, pickColor, superSamples)
 
           // Update speed and time taken
           var elapsedMS = now - start;
-          $('renderTime').innerHTML = elapsedMS/1000.0;
+          $('renderTime').innerHTML = (elapsedMS/1000.0).toFixed(2);
           $('renderSpeed').innerHTML = scaled(Math.floor(pixels/elapsedMS));
 
           // yield control back to browser, so that canvas is updated
