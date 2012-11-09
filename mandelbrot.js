@@ -96,17 +96,6 @@ function adjustAspectRatio(xRange, yRange, canvas)
   }
 }
 
-function updateGUI()
-{
-  if ( $('x') === null )
-    return;
-
-  $('x').innerHTML = lookAt[0];
-  $('y').innerHTML = lookAt[0];
-  $('z1').innerHTML = zoom[0];
-  $('z2').innerHTML = zoom[1];
-}
-
 /*
  * Render the Mandelbrot set
  */
@@ -130,8 +119,6 @@ function draw(lookAt, zoom, pickColor, superSamples)
 
     adjustAspectRatio(xRange, yRange, canvas);
   }
-
-  updateGUI();
 
   var steps = parseInt($('steps').value, 10);
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
@@ -385,8 +372,6 @@ function pickColorGrayscale2(steps, n, Tr, Ti)
 
 function main()
 {
-  updateGUI();
-
   $('viewPNG').onclick = function(event)
   {
     window.location = canvas.toDataURL('image/png');
