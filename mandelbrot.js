@@ -185,7 +185,7 @@ function draw(lookAt, zoom, pickColor, superSamples)
     return v;
   }
 
-  function drawLine(Ci, off, Cr_init, Cr_step)
+  function drawLineSuperSampled(Ci, off, Cr_init, Cr_step)
   {
     var Cr = Cr_init;
 
@@ -201,6 +201,20 @@ function draw(lookAt, zoom, pickColor, superSamples)
 
       color = divRGB(color, superSamples);
 
+      img.data[off  ] = color[0];
+      img.data[off+1] = color[1];
+      img.data[off+2] = color[2];
+      img.data[off+3] = 255;
+    }
+  }
+
+  function drawLine(Ci, off, Cr_init, Cr_step)
+  {
+    var Cr = Cr_init;
+
+    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
+      var p = calc(Cr, Ci);
+      var color = pickColor(steps, p[0], p[1], p[2]);
       img.data[off  ] = color[0];
       img.data[off+1] = color[1];
       img.data[off+2] = color[2];
@@ -230,11 +244,12 @@ function draw(lookAt, zoom, pickColor, superSamples)
     var pixels = 0;
     var Ci = yRange[0];
     var sy = 0;
+    var drawLineFunc = superSamples>1? drawLineSuperSampled : drawLine;
 
     var scanline = function()
     {
       if(startHeight != canvas.height || startWidth != canvas.width) { return; }
-      drawLine(Ci, 0, xRange[0], dx);
+      drawLineFunc(Ci, 0, xRange[0], dx);
       Ci += Ci_step;
       pixels += canvas.width;
       ctx.putImageData(img, 0, sy);
