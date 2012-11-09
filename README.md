@@ -96,7 +96,7 @@ In my code, I originally used the following smoothing equation:
 
     1 + n - Math.log(Math.log(Math.sqrt(Zr*Zr+Zi*Zi)))/Math.log(2.0);
 
-With some elementary logarithm rules, we can simplify this toA
+With some elementary logarithm rules, we can simplify this to:
 
     // Some constants
     var logBase = 1.0 / Math.log(2.0);
