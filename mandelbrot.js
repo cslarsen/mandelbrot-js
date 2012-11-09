@@ -387,6 +387,11 @@ function main()
 {
   updateGUI();
 
+  $('viewPNG').onclick = function(event)
+  {
+    window.location = canvas.toDataURL('image/png');
+  };
+
   /*
    * Enable zooming (currently, the zooming is inexact!)
    */
