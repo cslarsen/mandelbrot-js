@@ -107,6 +107,26 @@ With some elementary logarithm rules, we can simplify this to
 which is faster.  The constant `5` is another little trick, which should
 be explained in the code itself.
 
+Anti-aliasing and supersampling
+-------------------------------
+
+Finally, when you calculate the color value of a single pixel, it is in
+reality just the color of a single point in the Mandelbrot set that is
+situated somewhere _inside_ that pixel.
+
+What I'm saying is that you'll basically get pixel artifacts in the image,
+especially in dense areas where the color changes (near the black set, for
+instance).
+
+So what I do is to use random sampling:  Just sample a given number of
+random points inside the pixel and average the sum of the color values.
+This is equivalent to rendering the plot at a higher resolution and scaling
+down.
+
+There are many supersampling techniques to use, and the random sampling was
+chosen because of its simplicity.  The problem is that the resulting picture
+will look a bit blurry (there are ways around this as well).
+
 Optimizing the calculation for performance
 ==========================================
 
