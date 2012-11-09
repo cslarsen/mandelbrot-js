@@ -139,6 +139,9 @@ function draw(lookAt, zoom, pickColor, superSamples)
   var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
   var Ci_step = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
 
+  // Only enable one render at a time
+  renderId += 1;
+
   function calc(Cr, Ci)
   {
       var Zr = 0;
@@ -391,8 +394,6 @@ function main()
     $('canvasMandelbrot').onclick = function(event)
     {
       // Signal any current rendering to stop and wait for it
-      renderId += 1;
-
       var x = event.clientX;
       var y = event.clientY;
       var w = window.innerWidth;
