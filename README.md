@@ -96,17 +96,15 @@ In my code, I originally used the following smoothing equation:
 
     1 + n - Math.log(Math.log(Math.sqrt(Zr*Zr+Zi*Zi)))/Math.log(2.0);
 
-With some elementary logarithm rules, we can simplify this to:
+With some elementary logarithm rules, we can simplify this to
 
     // Some constants
     var logBase = 1.0 / Math.log(2.0);
     var logHalfBase = Math.log(0.5)*logBase;
-
     // ...
-
     return 5 + n - logHalfBase - Math.log(Math.log(Tr+Ti))*logBase;
 
-... which is faster.  The constant `5` is another little trick, which should
+which is faster.  The constant `5` is another little trick, which should
 be explained in the code itself.
 
 Optimizing the calculation for performance
