@@ -71,6 +71,43 @@ and _map_ that against a color spectrum, and paint that color.
 
 So, functions diverging quickly will get about the same color.
 
+Smooth coloring
+---------------
+
+If you use the number of iterations to pick a color, you'll get ugly color
+bands in the plot.  There is a really cool trick to get smooth, gradual
+color changes.
+
+So, you basically calculate `Z = Z^2` until it diverges and make a note of
+the iteration count.  What we really want, though, is a _fractional_
+iteration count, so we can multiply that with a color value to get smooth
+colors.
+
+The trick is to note that when you calculate `Z = Z^2` you'll get values `Z,
+Z^2, Z^4, Z^8` and so on.  If you take the logarithm of this, you'll get the
+values 1, 2, 4, 8 etc.  If you take the logarithm one more time, you'll get
+1, 2, 3, 4, 5 etc.  So to get a fractional number of iterations, just do:
+
+    log(log |Z|) / log 2
+
+This is all explained over at http://linas.org/art-gallery/escape/smooth.html
+
+In my code, I originally used the following smoothing equation:
+
+    1 + n - Math.log(Math.log(Math.sqrt(Zr*Zr+Zi*Zi)))/Math.log(2.0);
+
+With some elementary logarithm rules, we can simplify this toA
+
+    // Some constants
+    var logBase = 1.0 / Math.log(2.0);
+    var logHalfBase = Math.log(0.5)*logBase;
+
+    // ...
+
+    return 5 + n - logHalfBase - Math.log(Math.log(Tr+Ti))*logBase;
+
+... which is faster.
+
 Optimizing the calculation for performance
 ==========================================
 
