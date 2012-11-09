@@ -22,6 +22,7 @@ var interiorColor = [0, 0, 0, 255];
 var reInitCanvas = true; // Whether to reload canvas size, etc
 var useZoom = true;
 var colors = [[0,0,0,0]];
+var renderId = 0; // To zoom before current render is finished
 
 /*
  * Just a shorthand function: Fetch given element, jQuery-style
@@ -245,10 +246,18 @@ function draw(lookAt, zoom, pickColor, superSamples)
     var Ci = yRange[0];
     var sy = 0;
     var drawLineFunc = superSamples>1? drawLineSuperSampled : drawLine;
+    var ourRenderId = renderId;
 
     var scanline = function()
     {
-      if(startHeight != canvas.height || startWidth != canvas.width) { return; }
+      if (    renderId != ourRenderId ||
+           startHeight != canvas.height ||
+            startWidth != canvas.width )
+      {
+        // Stop drawing
+        return;
+      }
+
       drawLineFunc(Ci, 0, xRange[0], dx);
       Ci += Ci_step;
       pixels += canvas.width;
@@ -283,14 +292,10 @@ function draw(lookAt, zoom, pickColor, superSamples)
           setTimeout(scanline);
         } else
           scanline();
-      } else {
-        // finished rendering
-        $('submitButton').disabled = false;
       }
     };
 
     // Disallow redrawing while rendering
-    $('submitButton').disabled = true;
     scanline();
   }
 
@@ -385,10 +390,8 @@ function main()
   if ( useZoom ) {
     $('canvasMandelbrot').onclick = function(event)
     {
-      // disallow zooming while rendering
-      // (or; you could just cancel rendering and zoom instead)
-      if ( $('submitButton').disabled == true )
-        return;
+      // Signal any current rendering to stop and wait for it
+      renderId += 1;
 
       var x = event.clientX;
       var y = event.clientY;
