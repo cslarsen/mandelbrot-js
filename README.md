@@ -106,7 +106,8 @@ With some elementary logarithm rules, we can simplify this to:
 
     return 5 + n - logHalfBase - Math.log(Math.log(Tr+Ti))*logBase;
 
-... which is faster.
+... which is faster.  The constant `5` is another little trick, which should
+be explained in the code itself.
 
 Optimizing the calculation for performance
 ==========================================
