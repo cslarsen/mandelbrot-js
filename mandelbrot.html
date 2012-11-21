@@ -33,12 +33,6 @@
       #bottom a { color: #666; }
       #bottom a:hover { color: #FF3B03; }
 
-      select {
-        background-color: transparent;
-        color: #ccc;
-        border: none;
-      }
-
       #canvasMandelbrot {
         background-color: black;
         position: absolute;
@@ -98,11 +92,21 @@
         outline: none;
       }
 
-      #colorScheme {
-        background-color: transparent;
+      #description select {
+        border: #333 1px solid;
         color: #ccc;
-        border-color: #333;
         outline: none;
+        background-color: #333;
+        -webkit-appearance: none;
+        font-size: 10pt;
+      }
+
+      #autoIterations {
+        border: #333 1px solid;
+        color: #ccc;
+        outline: none;
+        background-color: #333;
+        font-size: 10pt;
       }
 
       .headerText {
@@ -146,7 +150,7 @@
           </tr>
           <tr>
             <td>Iterations</td>
-            <td> <input class="textInput" size="4" type="text" id="steps" value="50" /> </td>
+            <td> <input class="textInput" size="4" type="text" id="steps" value="50" /> <input type="checkbox" id="autoIterations" checked="checked"/> <small>auto</small></td>
           </tr>
           <tr>
             <td>Escape radius</td>
@@ -192,6 +196,7 @@
             <a href="https://github.com/cslarsen/mandelbrot-js">Code on Github</a>
             <br/>
             Click + drag to zoom in, shift +click to zoom out.
+            Change settings above and click <i>draw</i> to render.
           </small>
         </div>
     </div>

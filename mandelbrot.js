@@ -124,6 +124,17 @@ function draw(lookAt, zoom, pickColor, superSamples)
   }
 
   var steps = parseInt($('steps').value, 10);
+
+  if ( $('autoIterations').checked ) {
+    var f = Math.sqrt(
+            0.001+2.0 * Math.min(
+              Math.abs(xRange[0]-xRange[1]),
+              Math.abs(yRange[0]-yRange[1])));
+
+    steps = Math.floor(223.0/f);
+    $('steps').value = steps;
+  }
+
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
