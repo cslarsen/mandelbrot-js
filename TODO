@@ -1,3 +1,4 @@
 - When typing in "Iterations"; disable AUTO
 - One comma in speed
 - If speed is NaN, increase time unit
+- Faster mouse-drag-box (now we clear the whole window)
