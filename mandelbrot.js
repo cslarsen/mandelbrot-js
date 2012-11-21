@@ -472,6 +472,7 @@ function main()
   $('resetButton').onclick = function(even)
   {
     $('settingsForm').reset();
+    setTimeout(function() { location.hash = ''; });
     zoom = [zoomStart, zoomStart];
     lookAt = lookAtDefault;
     reInitCanvas = true;
