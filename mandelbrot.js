@@ -469,6 +469,12 @@ function main()
     window.location = canvas.toDataURL('image/png');
   };
 
+  $('steps').onkeypress = function(event)
+  {
+    // disable auto-iterations when user edits it manually
+    $('autoIterations').checked = false;
+  }
+
   $('resetButton').onclick = function(even)
   {
     $('settingsForm').reset();
