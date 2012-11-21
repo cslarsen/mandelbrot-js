@@ -1,4 +1,3 @@
-- Supersampling options (none, 2, 4, 8, 16, etc)
-- Webworkers for concurrency?
-- Progress bar (requires yielding control)
-- HSV / Grayscale option
+- When typing in "Iterations"; disable AUTO
+- One comma in speed
+- If speed is NaN, increase time unit
