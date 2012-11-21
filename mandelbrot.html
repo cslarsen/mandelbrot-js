@@ -80,20 +80,16 @@
       }
 
       #description input {
-        background-color: black;
         color: #ccc;
-        border-color: #333;
+        border-color: #444;
         outline: none;
-      }
-
-      #description button {
-        border: #333 1px solid;
-        color: #ccc;
-        outline: none;
+        background-color: transparent;
+        border-width: 1px;
+        border-color: #888;
       }
 
       #description select {
-        border: #333 1px solid;
+        border: #444 1px solid;
         color: #ccc;
         outline: none;
         background-color: #333;
@@ -102,7 +98,7 @@
       }
 
       #autoIterations {
-        border: #333 1px solid;
+        border: #444 1px solid;
         color: #ccc;
         outline: none;
         background-color: #333;
@@ -116,7 +112,7 @@
       #description .textInput {
         text-align: right;
         background-color: transparent;
-        border: #333 1px solid;
+        border: #444 1px solid;
         font-size: 10pt;
       }
 
@@ -136,7 +132,7 @@
       </div>
       </p>
       </header>
-        <form action="javascript:draw(lookAt, zoom, getColorPicker(), getSamples(), false);">
+        <form action="javascript:draw(lookAt, zoom, getColorPicker(), getSamples());">
           <table>
           <tr>
             <td>Rendering time</td>
@@ -194,9 +190,10 @@
           <small>
             Made by <a href="http://csl.sublevel3.org">Christian Stigen Larsen</a> &mdash;
             <a href="https://github.com/cslarsen/mandelbrot-js">Code on Github</a>
-            <br/>
+            <br/> &nbsp; <br/>
             Click + drag to zoom in, shift +click to zoom out.
-            Change settings above and click <i>draw</i> to render.
+            You can change the settings above and hit <i>Draw</i> to render
+            anew.
           </small>
         </div>
     </div>
@@ -231,6 +228,8 @@
         var i = parseInt($('superSamples').value);
         return i<=0? 1 : i;
       }
+
+      main();
     </script>
   </body>
 </html>

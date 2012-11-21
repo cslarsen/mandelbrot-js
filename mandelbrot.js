@@ -33,6 +33,62 @@ function $(id)
 }
 
 /*
+ * Update URL's hash with render parameters so we can pass it around.
+ */
+function updateHashTag(zoom, lookAt, iterations, samples, radius, scheme)
+{
+  location.hash = 'zoom=' + zoom + '&' +
+                  'lookAt=' + lookAt + '&' +
+                  'iterations=' + iterations + '&' +
+                  'superSamples=' + samples + '&' +
+                  'escapeRadius=' + radius + '&' +
+                  'colorScheme=' + scheme;;
+}
+
+/*
+ * Parse URL hash tag, returns whether we should redraw.
+ */
+function readHashTag()
+{
+  var redraw = false;
+  var tags = location.hash.split('&');
+
+  for ( var i=0; i<tags.length; ++i ) {
+    var tag = tags[i].split('=');
+    var key = tag[0];
+    var val = tag[1];
+
+    if ( key == '#zoom' ) {
+      var z = val.split(',');
+      zoom = [parseFloat(z[0]), parseFloat(z[1])];
+      redraw = true;
+    } else if ( key == 'lookAt' ) {
+      var l = val.split(',');
+      lookAt = [parseFloat(l[0]), parseFloat(l[1])];
+      redraw = true;
+    } else if ( key == 'iterations' ) {
+      $('steps').value = Math.abs(parseInt(val));
+      redraw = true;
+    } else if ( key == 'escapeRadius' ) {
+      escapeRadius = parseFloat(val);
+      $('escapeRadius').value = escapeRadius;
+      redraw = true;
+    } else if ( key == 'superSamples' ) {
+      $('superSamples').value = Math.abs(parseInt(val));
+      redraw = true;
+    } else if ( key == 'colorScheme' ) {
+      $('colorScheme').value = val;
+      redraw = true;
+    }
+  }
+
+  if ( redraw )
+    reInitCanvas = true;
+
+  return redraw;
+}
+
+/*
  * Return number with metric units
  */
 function scaled(number)
@@ -139,6 +195,8 @@ function draw(lookAt, zoom, pickColor, superSamples)
   var dx = (xRange[1] - xRange[0]) / (0.5 + (canvas.width-1));
   var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
   var Ci_step = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
+
+  updateHashTag(zoom, lookAt, steps, superSamples, escapeRadius, $('colorScheme').value);
 
   // Only enable one render at a time
   renderId += 1;
@@ -525,6 +583,7 @@ function main()
   {
     reInitCanvas = true;
   };
-}
 
-main();
+  if ( readHashTag() )
+    draw(lookAt, zoom, getColorPicker(), getSamples());
+}
