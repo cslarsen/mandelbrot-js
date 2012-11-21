@@ -132,7 +132,7 @@
       </div>
       </p>
       </header>
-        <form action="javascript:draw(lookAt, zoom, getColorPicker(), getSamples());">
+        <form id="settingsForm" action="javascript:draw(lookAt, zoom, getColorPicker(), getSamples());">
           <table>
           <tr>
             <td>Rendering time</td>
@@ -146,7 +146,7 @@
           </tr>
           <tr>
             <td>Iterations</td>
-            <td> <input class="textInput" size="4" type="text" id="steps" value="50" /> <input type="checkbox" id="autoIterations" checked="checked"/> <small>auto</small></td>
+            <td valign="middle"> <input class="textInput" size="4" type="text" id="steps" value="50" /> <input type="checkbox" id="autoIterations" checked="checked"/> <small>auto</small></td>
           </tr>
           <tr>
             <td>Escape radius</td>
@@ -177,6 +177,8 @@
           </tr>
           <tr>
             <td colspan="2"><input type="submit" id="submitButton" value="Draw" />
+            &nbsp;
+            <input type="reset" id="resetButton" value="Reset" />
             &nbsp;
             <input type="button" id="viewPNG" value="View as PNG" />
             </td>

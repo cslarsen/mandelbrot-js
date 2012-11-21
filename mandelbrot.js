@@ -15,7 +15,8 @@
  */
 var zoomStart = 3.4;
 var zoom = [zoomStart, zoomStart];
-var lookAt = [-0.6, 0];
+var lookAtDefault = [-0.6, 0];
+var lookAt = lookAtDefault;
 var xRange = [0, 0];
 var yRange = [0, 0];
 var interiorColor = [0, 0, 0, 255];
@@ -447,6 +448,15 @@ function main()
   $('viewPNG').onclick = function(event)
   {
     window.location = canvas.toDataURL('image/png');
+  };
+
+  $('resetButton').onclick = function(even)
+  {
+    $('settingsForm').reset();
+    zoom = [zoomStart, zoomStart];
+    lookAt = lookAtDefault;
+    reInitCanvas = true;
+    draw(lookAt, zoom, getColorPicker(), getSamples());
   };
 
   if ( dragToZoom == true ) {
