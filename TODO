@@ -1,3 +1,2 @@
-- If speed is NaN, increase time unit
 - Faster mouse-drag-box (now we clear the whole window)
 - Ability to retract settings console (minimize it)
