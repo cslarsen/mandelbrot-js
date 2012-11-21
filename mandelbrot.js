@@ -366,7 +366,7 @@ function draw(pickColor, superSamples)
 
           // Update speed and time taken
           var elapsedMS = now - start;
-          $('renderTime').innerHTML = (elapsedMS/1000.0).toFixed(2);
+          $('renderTime').innerHTML = (elapsedMS/1000.0).toFixed(1); // 1 comma
           $('renderSpeed').innerHTML = scaled(Math.floor(pixels/elapsedMS));
 
           // yield control back to browser, so that canvas is updated
