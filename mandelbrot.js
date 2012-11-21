@@ -216,7 +216,9 @@ function draw(pickColor, superSamples)
   updateHashTag(superSamples, steps);
 
   // Update infobox
-  $('infoBox').innerHTML = xRange + ' ' + yRange;
+  $('infoBox').innerHTML =
+    'x<sub>0</sub>=' + xRange[0] + ' y<sub>0</sub>=' + yRange[0] + ' ' +
+    'x<sub>1</sub>=' + xRange[1] + ' y<sub>1</sub>=' + yRange[1];
 
   // Only enable one render at a time
   renderId += 1;
