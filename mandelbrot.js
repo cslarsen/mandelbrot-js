@@ -50,6 +50,19 @@ function updateHashTag(samples, iterations)
 }
 
 /*
+ * Update small info box in lower right hand side
+ */
+function updateInfoBox()
+{
+  // Update infobox
+  $('infoBox').innerHTML =
+    'x<sub>0</sub>=' + xRange[0] + ' y<sub>0</sub>=' + yRange[0] + ' ' +
+    'x<sub>1</sub>=' + xRange[1] + ' y<sub>1</sub>=' + yRange[1] + ' ' +
+    'w&#10799;h=' + canvas.width + 'x' + canvas.height + ' '
+        + (canvas.width*canvas.height/1000000.0).toFixed(1) + 'MP';
+}
+
+/*
  * Parse URL hash tag, returns whether we should redraw.
  */
 function readHashTag()
@@ -214,11 +227,7 @@ function draw(pickColor, superSamples)
   var Ci_step = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
 
   updateHashTag(superSamples, steps);
-
-  // Update infobox
-  $('infoBox').innerHTML =
-    'x<sub>0</sub>=' + xRange[0] + ' y<sub>0</sub>=' + yRange[0] + ' ' +
-    'x<sub>1</sub>=' + xRange[1] + ' y<sub>1</sub>=' + yRange[1];
+  updateInfoBox();
 
   // Only enable one render at a time
   renderId += 1;
