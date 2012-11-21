@@ -75,6 +75,32 @@
         -o-user-select: none;
       }
 
+      #infoBox:hover {
+        background-color: rgba(30, 30, 30, 0.6);
+        color: #444;
+      }
+
+      #infoBox {
+        z-index: 10;
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        padding: 5px;
+
+        background: transparent;
+        color: rgba(51,51,51,0.1);
+        text-shadow: none;
+
+        font-family: sans-serif;
+
+        /* Make text non-selecatble */
+        user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+      }
+
       #description table {
         color: #ccc;
       }
@@ -83,7 +109,7 @@
         color: #ccc;
         border-color: #444;
         outline: none;
-        background-color: transparent;
+        background-color: rgba(48,48,48,0.5);
         border-width: 1px;
         border-color: #888;
       }
@@ -132,7 +158,7 @@
       </div>
       </p>
       </header>
-        <form id="settingsForm" action="javascript:draw(lookAt, zoom, getColorPicker(), getSamples());">
+        <form id="settingsForm" action="javascript:draw(getColorPicker(), getSamples());">
           <table>
           <tr>
             <td>Rendering time</td>
@@ -203,6 +229,10 @@
     <div id="canvasContainer">
       <canvas id="canvasMandelbrot" width="0" height="0"> </canvas>
       <canvas id="canvasControls" width="0" height="0"> </canvas>
+    </div>
+
+    <div id="infoBox">
+      <small><span id="infoText"></span></small>
     </div>
 
     <script type="text/javascript" src="mandelbrot.js">

@@ -36,14 +36,17 @@ function $(id)
 /*
  * Update URL's hash with render parameters so we can pass it around.
  */
-function updateHashTag(zoom, lookAt, iterations, samples, radius, scheme)
+function updateHashTag(samples, iterations)
 {
+  var radius = $('escapeRadius').value;
+  var scheme = $('colorScheme').value;
+
   location.hash = 'zoom=' + zoom + '&' +
                   'lookAt=' + lookAt + '&' +
                   'iterations=' + iterations + '&' +
                   'superSamples=' + samples + '&' +
                   'escapeRadius=' + radius + '&' +
-                  'colorScheme=' + scheme;;
+                  'colorScheme=' + scheme;
 }
 
 /*
@@ -59,27 +62,40 @@ function readHashTag()
     var key = tag[0];
     var val = tag[1];
 
-    if ( key == '#zoom' ) {
-      var z = val.split(',');
-      zoom = [parseFloat(z[0]), parseFloat(z[1])];
-      redraw = true;
-    } else if ( key == 'lookAt' ) {
-      var l = val.split(',');
-      lookAt = [parseFloat(l[0]), parseFloat(l[1])];
-      redraw = true;
-    } else if ( key == 'iterations' ) {
-      $('steps').value = Math.abs(parseInt(val));
-      redraw = true;
-    } else if ( key == 'escapeRadius' ) {
-      escapeRadius = parseFloat(val);
-      $('escapeRadius').value = escapeRadius;
-      redraw = true;
-    } else if ( key == 'superSamples' ) {
-      $('superSamples').value = Math.abs(parseInt(val));
-      redraw = true;
-    } else if ( key == 'colorScheme' ) {
-      $('colorScheme').value = val;
-      redraw = true;
+    switch ( key ) {
+      case '#zoom': {
+        var z = val.split(',');
+        zoom = [parseFloat(z[0]), parseFloat(z[1])];
+        redraw = true;
+      } break;
+
+      case 'lookAt': {
+        var l = val.split(',');
+        lookAt = [parseFloat(l[0]), parseFloat(l[1])];
+        redraw = true;
+      } break;
+
+      case 'iterations': {
+        $('steps').value = String(parseInt(val));
+        $('autoIterations').checked = false;
+        redraw = true;
+      } break;
+
+      case 'escapeRadius': {
+        escapeRadius = parseFloat(val);
+        $('escapeRadius').value = String(escapeRadius);
+        redraw = true;
+      } break;
+
+      case 'superSamples': {
+        $('superSamples').value = String(parseInt(val));
+        redraw = true;
+      } break;
+
+      case 'colorScheme': {
+        $('colorScheme').value = String(val);
+        redraw = true;
+      } break;
     }
   }
 
@@ -155,7 +171,7 @@ function adjustAspectRatio(xRange, yRange, canvas)
 /*
  * Render the Mandelbrot set
  */
-function draw(lookAt, zoom, pickColor, superSamples)
+function draw(pickColor, superSamples)
 {
   if ( lookAt === null ) lookAt = [-0.6, 0];
   if ( zoom === null ) zoom = [zoomStart, zoomStart];
@@ -189,7 +205,7 @@ function draw(lookAt, zoom, pickColor, superSamples)
               Math.abs(yRange[0]-yRange[1])));
 
     steps = Math.floor(223.0/f);
-    $('steps').value = steps;
+    $('steps').value = String(steps);
   }
 
   var escapeRadius = Math.pow(parseFloat($('escapeRadius').value), 2.0);
@@ -197,7 +213,10 @@ function draw(lookAt, zoom, pickColor, superSamples)
   var dy = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
   var Ci_step = (yRange[1] - yRange[0]) / (0.5 + (canvas.height-1));
 
-  updateHashTag(zoom, lookAt, steps, superSamples, escapeRadius, $('colorScheme').value);
+  updateHashTag(superSamples, steps);
+
+  // Update infobox
+  $('infoBox').innerHTML = xRange + ' ' + yRange;
 
   // Only enable one render at a time
   renderId += 1;
@@ -456,7 +475,7 @@ function main()
     zoom = [zoomStart, zoomStart];
     lookAt = lookAtDefault;
     reInitCanvas = true;
-    draw(lookAt, zoom, getColorPicker(), getSamples());
+    draw(getColorPicker(), getSamples());
   };
 
   if ( dragToZoom == true ) {
@@ -505,7 +524,7 @@ function main()
         zoom[1] /= 0.5;
       }
 
-      draw(lookAt, zoom, getColorPicker(), getSamples());
+      draw(getColorPicker(), getSamples());
     };
 
     $('canvasControls').onmouseup = function(e)
@@ -549,7 +568,7 @@ function main()
         zoom[1] *= Math.max(xf, yf);
 
         box = null;
-        draw(lookAt, zoom, getColorPicker(), getSamples());
+        draw(getColorPicker(), getSamples());
       }
     }
   }
@@ -582,7 +601,7 @@ function main()
         zoom[1] *= 0.5;
       }
 
-      draw(lookAt, zoom, getColorPicker(), getSamples());
+      draw(getColorPicker(), getSamples());
     };
   }
 
@@ -594,6 +613,22 @@ function main()
     reInitCanvas = true;
   };
 
-  if ( readHashTag() )
-    draw(lookAt, zoom, getColorPicker(), getSamples());
+  if ( readHashTag() ) {
+    /*
+     * This is the weirdest bug ever.  When I go directly to a link like
+     *
+     *   mandelbrot.html#zoom=0.01570294345468629,0.010827482681521361&
+     *   lookAt=-0.3083866260309053,-0.6223590662533901&iterations=5000&
+     *   superSamples=1&escapeRadius=16&colorScheme=pickColorHSV2
+     *
+     * it will render a black image, but if I call the function twice, it
+     * works nicely.  Must be a global variable that's not been set upon the
+     * first entry to the function (TODO: Find out what's wrong).
+     *
+     * Yeah, I know, the code is a total mess at the moment.  I'll get back
+     * to that.
+     */
+    draw(getColorPicker(), getSamples());
+    draw(getColorPicker(), getSamples());
+  }
 }
