@@ -1,5 +1,8 @@
 TARGETS = mandelbrot.min.js
 
+# Google Closure Compiler
+# https://developers.google.com/closure/compiler/
+#
 CLOSURE_CC = closure-compiler
 CLOSURE_FLAGS = --compilation_level ADVANCED_OPTIMIZATIONS \
 								--warning_level VERBOSE
