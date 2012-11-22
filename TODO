@@ -12,3 +12,4 @@
    update this array when panning has finished, and then restart
    rendering. Rendering updates this array when a scanline has
    been copied to the canvas).
+- When resizing window, scale up the canvas bitmap before rerendering.
