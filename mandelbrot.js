@@ -189,6 +189,24 @@ function adjustAspectRatio(xRange, yRange, canvas)
   }
 }
 
+function addRGB(v, w)
+{
+  v[0] += w[0];
+  v[1] += w[1];
+  v[2] += w[2];
+  v[3] += w[3];
+  return v;
+}
+
+function divRGB(v, div)
+{
+  v[0] /= div;
+  v[1] /= div;
+  v[2] /= div;
+  v[3] /= div;
+  return v;
+}
+
 /*
  * Render the Mandelbrot set
  */
@@ -285,24 +303,6 @@ function draw(pickColor, superSamples)
     }
 
     return [n, Tr, Ti];
-  }
-
-  function addRGB(v, w)
-  {
-    v[0] += w[0];
-    v[1] += w[1];
-    v[2] += w[2];
-    v[3] += w[3];
-    return v;
-  }
-
-  function divRGB(v, div)
-  {
-    v[0] /= div;
-    v[1] /= div;
-    v[2] /= div;
-    v[3] /= div;
-    return v;
   }
 
   function drawLineSuperSampled(Ci, off, Cr_init, Cr_step)
