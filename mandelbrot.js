@@ -309,12 +309,11 @@ function draw(pickColor, superSamples)
   // Only enable one render at a time
   renderId += 1;
 
-
   function drawLineSuperSampled(Ci, off, Cr_init, Cr_step)
   {
     var Cr = Cr_init;
 
-    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
+    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step ) {
       var color = [0, 0, 0, 255];
 
       for ( var s=0; s<superSamples; ++s ) {
@@ -326,10 +325,10 @@ function draw(pickColor, superSamples)
 
       color = divRGB(color, superSamples);
 
-      img.data[off  ] = color[0];
-      img.data[off+1] = color[1];
-      img.data[off+2] = color[2];
-      img.data[off+3] = 255;
+      img.data[off++] = color[0];
+      img.data[off++] = color[1];
+      img.data[off++] = color[2];
+      img.data[off++] = 255;
     }
   }
 
@@ -337,13 +336,13 @@ function draw(pickColor, superSamples)
   {
     var Cr = Cr_init;
 
-    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
+    for ( var x=0; x<canvas.width; ++x, Cr += Cr_step ) {
       var p = iterateEquation(Cr, Ci, escapeRadius, steps);
       var color = pickColor(steps, p[0], p[1], p[2]);
-      img.data[off  ] = color[0];
-      img.data[off+1] = color[1];
-      img.data[off+2] = color[2];
-      img.data[off+3] = 255;
+      img.data[off++] = color[0];
+      img.data[off++] = color[1];
+      img.data[off++] = color[2];
+      img.data[off++] = 255;
     }
   }
 
@@ -351,11 +350,11 @@ function draw(pickColor, superSamples)
   {
     var off = y*canvas.width;
 
-    for ( var x=0; x<canvas.width; ++x, off += 4 ) {
-      img.data[off+0] = color[0];
-      img.data[off+1] = color[1];
-      img.data[off+2] = color[2];
-      img.data[off+3] = color[3];
+    for ( var x=0; x<canvas.width; ++x ) {
+      img.data[off++] = color[0];
+      img.data[off++] = color[1];
+      img.data[off++] = color[2];
+      img.data[off++] = color[3];
     }
   }
 
