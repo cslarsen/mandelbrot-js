@@ -201,6 +201,7 @@ function hsv_to_rgb(h, s, v)
   var hp = h/60.0;
   var c = v * s;
   var x = c*(1 - Math.abs((hp % 2) - 1));
+  var rgb = [0,0,0];
 
   if ( 0<=hp && hp<1 ) rgb = [c, x, 0];
   if ( 1<=hp && hp<2 ) rgb = [x, c, 0];
@@ -456,7 +457,7 @@ function pickColorHSV1(steps, n, Tr, Ti)
     return interiorColor;
 
   var v = smoothColor(steps, n, Tr, Ti);
-  c = hsv_to_rgb(360.0*v/steps, 1.0, 1.0);
+  var c = hsv_to_rgb(360.0*v/steps, 1.0, 1.0);
   c.push(255); // alpha
   return c;
 }
@@ -536,7 +537,7 @@ function main()
   };
 
   if ( dragToZoom == true ) {
-    box = null;
+    var box = null;
 
     $('canvasControls').onmousedown = function(e)
     {
@@ -561,7 +562,7 @@ function main()
       }
     }
 
-    var zoomOut = function() {
+    var zoomOut = function(event) {
       var x = event.clientX;
       var y = event.clientY;
 
@@ -590,7 +591,7 @@ function main()
         // Zoom out?
         if ( e.shiftKey ) {
           box = null;
-          zoomOut();
+          zoomOut(e);
           return;
         }
 
