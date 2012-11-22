@@ -459,7 +459,7 @@ function draw(pickColor, superSamples)
 
           // yield control back to browser, so that canvas is updated
           lastUpdate = now;
-          setTimeout(scanline);
+          setTimeout(scanline, 0);
         } else
           scanline();
       }
@@ -566,7 +566,7 @@ function main()
   $('resetButton').onclick = function(even)
   {
     $('settingsForm').reset();
-    setTimeout(function() { location.hash = ''; });
+    setTimeout(function() { location.hash = ''; }, 1);
     zoom = [zoomStart, zoomStart];
     lookAt = lookAtDefault;
     reInitCanvas = true;
