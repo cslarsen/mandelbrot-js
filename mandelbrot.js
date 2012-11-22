@@ -129,7 +129,7 @@ function readHashTag()
 /*
  * Return number with metric units
  */
-function scaled(number)
+function metric_units(number)
 {
   var unit = ["", "k", "M", "G", "T", "P", "E"];
   var mag = Math.ceil((1+Math.log(number)/Math.log(10))/3);
@@ -407,13 +407,13 @@ function draw(pickColor, superSamples)
 
           var speed = Math.floor(pixels / elapsedMS);
 
-          if ( scaled(speed).substr(0,3)=="NaN" ) {
+          if ( metric_units(speed).substr(0,3)=="NaN" ) {
             speed = Math.floor(60.0*pixels / elapsedMS);
             $('renderSpeedUnit').innerHTML = 'minute';
           } else
             $('renderSpeedUnit').innerHTML = 'second';
 
-          $('renderSpeed').innerHTML = scaled(speed);
+          $('renderSpeed').innerHTML = metric_units(speed);
 
           // yield control back to browser, so that canvas is updated
           lastUpdate = now;
