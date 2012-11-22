@@ -3,8 +3,7 @@ Mandelbrot.js
 
 Vanilla Mandelbrot Set renderer in HTML5 canvas and javascript.
 
-This code running in action can be seen at
-http://csl.sublevel3.org/mandelbrot/
+This code running in action can be seen at http://mandelbrot-set.com
 
 Author
 ------
@@ -326,8 +325,20 @@ Take a look at the optimizations done to the Mandelbrot set in
 [The Computer Language Benchmarks Game](http://shootout.alioth.debian.org/u32/performance.php?test=mandelbrot)
 
 There are a lot of cool tricks going on there.  Most of _those_ use SSE
-parallelism for hardware speedup.
+parallelism for hardware speedup or offloads to the GPU.
 
 License
 -------
-Put in the public domain by the author on March, 2012
+Copyright 2012 Christian Stigen Larsen
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License.  You may obtain a copy
+of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+License for the specific language governing permissions and limitations
+under the License.
