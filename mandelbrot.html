@@ -245,28 +245,6 @@
     </script>
 
     <script type="text/javascript">
-      function focusOnSubmit()
-      {
-        var e = $('submitButton');
-        if ( e ) e.focus();
-      }
-
-      function getColorPicker()
-      {
-        var p = $("colorScheme").value;
-        if ( p == "pickColorHSV1" ) return pickColorHSV1;
-        if ( p == "pickColorHSV2" ) return pickColorHSV2;
-        if ( p == "pickColorHSV3" ) return pickColorHSV3;
-        if ( p == "pickColorGrayscale2" ) return pickColorGrayscale2;
-        return pickColorGrayscale;
-      }
-
-      function getSamples()
-      {
-        var i = parseInt($('superSamples').value);
-        return i<=0? 1 : i;
-      }
-
       main();
     </script>
   </body>

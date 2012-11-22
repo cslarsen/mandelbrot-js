@@ -27,6 +27,7 @@ var lookAtDefault = [-0.6, 0];
 var lookAt = lookAtDefault;
 var xRange = [0, 0];
 var yRange = [0, 0];
+var escapeRadius = 10.0;
 var interiorColor = [0, 0, 0, 255];
 var reInitCanvas = true; // Whether to reload canvas size, etc
 var dragToZoom = true;
@@ -34,11 +35,47 @@ var colors = [[0,0,0,0]];
 var renderId = 0; // To zoom before current render is finished
 
 /*
+ * Initialize canvas
+ */
+var canvas = $('canvasMandelbrot');
+canvas.width  = window.innerWidth;
+canvas.height = window.innerHeight;
+//
+var ccanvas = $('canvasControls');
+ccanvas.width  = window.innerWidth;
+ccanvas.height = window.innerHeight;
+//
+var ctx = canvas.getContext('2d');
+var img = ctx.createImageData(canvas.width, 1);
+
+/*
  * Just a shorthand function: Fetch given element, jQuery-style
  */
 function $(id)
 {
   return document.getElementById(id);
+}
+
+function focusOnSubmit()
+{
+  var e = $('submitButton');
+  if ( e ) e.focus();
+}
+
+function getColorPicker()
+{
+  var p = $("colorScheme").value;
+  if ( p == "pickColorHSV1" ) return pickColorHSV1;
+  if ( p == "pickColorHSV2" ) return pickColorHSV2;
+  if ( p == "pickColorHSV3" ) return pickColorHSV3;
+  if ( p == "pickColorGrayscale2" ) return pickColorGrayscale2;
+  return pickColorGrayscale;
+}
+
+function getSamples()
+{
+  var i = parseInt($('superSamples').value, 10);
+  return i<=0? 1 : i;
 }
 
 /*
@@ -148,7 +185,7 @@ function readHashTag()
       } break;
 
       case 'iterations': {
-        $('steps').value = String(parseInt(val));
+        $('steps').value = String(parseInt(val, 10));
         $('autoIterations').checked = false;
         redraw = true;
       } break;
@@ -160,7 +197,7 @@ function readHashTag()
       } break;
 
       case 'superSamples': {
-        $('superSamples').value = String(parseInt(val));
+        $('superSamples').value = String(parseInt(val, 10));
         redraw = true;
       } break;
 
