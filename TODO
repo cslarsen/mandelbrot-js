@@ -1,2 +1,4 @@
-- Faster mouse-drag-box (now we clear the whole window)
-- Ability to retract settings console (minimize it)
+- Ability to minimize settings console
+- Let dragging work outside window boundaries
+- Enable Julia rendering
+- Let dragging work over description and info box areas
