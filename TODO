@@ -2,3 +2,6 @@
 - Let dragging work outside window boundaries
 - Enable Julia rendering
 - Let dragging work over description and info box areas
+- Detect slow renderings and display ETA for them
+- Fix the auto-iterations function; consider creating an expanded polynomial
+  for it.
