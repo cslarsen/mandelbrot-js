@@ -242,31 +242,40 @@ function draw(pickColor, superSamples)
 
   function calc(Cr, Ci)
   {
-      var Zr = 0;
-      var Zi = 0;
-      var Tr = 0;
-      var Ti = 0;
-      var n  = 0;
+    /*
+     * Basic equation: Z_{n+1} = Z_{n} + C
+     * For the Mandelbrot set, we take C = x + iy based on the "look at"
+     * coordinates.
+     *
+     * The Julia set can be rendered by taking Z_{n+1} = Z_{n} + K with
+     * Z_{0} = C = x + iy, for some arbitrary constant K.
+     */
 
-      for ( ; n<steps && (Tr+Ti)<=escapeRadius; ++n ) {
-        Zi = 2 * Zr * Zi + Ci;
-        Zr = Tr - Ti + Cr;
-        Tr = Zr * Zr;
-        Ti = Zi * Zi;
-      }
+    var Zr = 0;
+    var Zi = 0;
+    var Tr = 0;
+    var Ti = 0;
+    var n  = 0;
 
-      /*
-       * Four more iterations to decrease error term;
-       * see http://linas.org/art-gallery/escape/escape.html
-       */
-      for ( var e=0; e<4; ++e ) {
-        Zi = 2 * Zr * Zi + Ci;
-        Zr = Tr - Ti + Cr;
-        Tr = Zr * Zr;
-        Ti = Zi * Zi;
-      }
+    for ( ; n<steps && (Tr+Ti)<=escapeRadius; ++n ) {
+      Zi = 2 * Zr * Zi + Ci;
+      Zr = Tr - Ti + Cr;
+      Tr = Zr * Zr;
+      Ti = Zi * Zi;
+    }
 
-      return [n, Tr, Ti];
+    /*
+     * Four more iterations to decrease error term;
+     * see http://linas.org/art-gallery/escape/escape.html
+     */
+    for ( var e=0; e<4; ++e ) {
+      Zi = 2 * Zr * Zi + Ci;
+      Zr = Tr - Ti + Cr;
+      Tr = Zr * Zr;
+      Ti = Zi * Zi;
+    }
+
+    return [n, Tr, Ti];
   }
 
   function addRGB(v, w)
