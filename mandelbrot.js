@@ -657,22 +657,25 @@ function main()
     reInitCanvas = true;
   };
 
-  if ( readHashTag() ) {
-    /*
-     * This is the weirdest bug ever.  When I go directly to a link like
-     *
-     *   mandelbrot.html#zoom=0.01570294345468629,0.010827482681521361&
-     *   lookAt=-0.3083866260309053,-0.6223590662533901&iterations=5000&
-     *   superSamples=1&escapeRadius=16&colorScheme=pickColorHSV2
-     *
-     * it will render a black image, but if I call the function twice, it
-     * works nicely.  Must be a global variable that's not been set upon the
-     * first entry to the function (TODO: Find out what's wrong).
-     *
-     * Yeah, I know, the code is a total mess at the moment.  I'll get back
-     * to that.
-     */
-    draw(getColorPicker(), getSamples());
-    draw(getColorPicker(), getSamples());
-  }
+  /*
+   * Read hash tag and render away at page load.
+   */
+  readHashTag();
+
+  /*
+   * This is the weirdest bug ever.  When I go directly to a link like
+   *
+   *   mandelbrot.html#zoom=0.01570294345468629,0.010827482681521361&
+   *   lookAt=-0.3083866260309053,-0.6223590662533901&iterations=5000&
+   *   superSamples=1&escapeRadius=16&colorScheme=pickColorHSV2
+   *
+   * it will render a black image, but if I call the function twice, it
+   * works nicely.  Must be a global variable that's not been set upon the
+   * first entry to the function (TODO: Find out what's wrong).
+   *
+   * Yeah, I know, the code is a total mess at the moment.  I'll get back
+   * to that.
+   */
+  draw(getColorPicker(), getSamples());
+  draw(getColorPicker(), getSamples());
 }
