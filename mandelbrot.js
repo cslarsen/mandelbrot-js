@@ -730,3 +730,5 @@ function main()
   draw(getColorPicker(), getSamples());
   draw(getColorPicker(), getSamples());
 }
+
+main();
