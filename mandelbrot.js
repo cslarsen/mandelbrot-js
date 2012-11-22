@@ -42,6 +42,57 @@ function $(id)
 }
 
 /*
+ * Main renderer equation.
+ *
+ * Returns number of iterations and values of Z_{n}^2 = Tr + Ti at the time
+ * we either converged (n == iterations) or diverged.  We use these to
+ * determined the color at the current pixel.
+ *
+ * The Mandelbrot set is rendered taking
+ *
+ *     Z_{n+1} = Z_{n} + C
+ *
+ * with C = x + iy, based on the "look at" coordinates.
+ *
+ * The Julia set can be rendered by taking
+ *
+ *     Z_{0} = C = x + iy
+ *     Z_{n+1} = Z_{n} + K
+ *
+ * for some arbitrary constant K.  The point C for Z_{0} must be the
+ * current pixel we're rendering, but K could be based on the "look at"
+ * coordinate, or by letting the user select a point on the screen.
+ */
+function iterateEquation(Cr, Ci, escapeRadius, iterations)
+{
+  var Zr = 0;
+  var Zi = 0;
+  var Tr = 0;
+  var Ti = 0;
+  var n  = 0;
+
+  for ( ; n<iterations && (Tr+Ti)<=escapeRadius; ++n ) {
+    Zi = 2 * Zr * Zi + Ci;
+    Zr = Tr - Ti + Cr;
+    Tr = Zr * Zr;
+    Ti = Zi * Zi;
+  }
+
+  /*
+   * Four more iterations to decrease error term;
+   * see http://linas.org/art-gallery/escape/escape.html
+   */
+  for ( var e=0; e<4; ++e ) {
+    Zi = 2 * Zr * Zi + Ci;
+    Zr = Tr - Ti + Cr;
+    Tr = Zr * Zr;
+    Ti = Zi * Zi;
+  }
+
+  return [n, Tr, Ti];
+}
+
+/*
  * Update URL's hash with render parameters so we can pass it around.
  */
 function updateHashTag(samples, iterations)
@@ -258,52 +309,6 @@ function draw(pickColor, superSamples)
   // Only enable one render at a time
   renderId += 1;
 
-  /*
-   * Main renderer equation.
-   *
-   * The Mandelbrot set is rendered taking
-   *
-   *     Z_{n+1} = Z_{n} + C
-   *
-   * with C = x + iy, based on the "look at" coordinates.
-   *
-   * The Julia set can be rendered by taking
-   *
-   *     Z_{0} = C = x + iy
-   *     Z_{n+1} = Z_{n} + K
-   *
-   * for some arbitrary constant K.  The point C for Z_{0} must be the
-   * current pixel we're rendering, but K could be based on the "look at"
-   * coordinate, or by letting the user select a point on the screen.
-   */
-  function iterateEquation(Cr, Ci)
-  {
-    var Zr = 0;
-    var Zi = 0;
-    var Tr = 0;
-    var Ti = 0;
-    var n  = 0;
-
-    for ( ; n<steps && (Tr+Ti)<=escapeRadius; ++n ) {
-      Zi = 2 * Zr * Zi + Ci;
-      Zr = Tr - Ti + Cr;
-      Tr = Zr * Zr;
-      Ti = Zi * Zi;
-    }
-
-    /*
-     * Four more iterations to decrease error term;
-     * see http://linas.org/art-gallery/escape/escape.html
-     */
-    for ( var e=0; e<4; ++e ) {
-      Zi = 2 * Zr * Zi + Ci;
-      Zr = Tr - Ti + Cr;
-      Tr = Zr * Zr;
-      Ti = Zi * Zi;
-    }
-
-    return [n, Tr, Ti];
-  }
 
   function drawLineSuperSampled(Ci, off, Cr_init, Cr_step)
   {
@@ -315,7 +320,7 @@ function draw(pickColor, superSamples)
       for ( var s=0; s<superSamples; ++s ) {
         var rx = Math.random()*Cr_step;
         var ry = Math.random()*Ci_step;
-        var p = iterateEquation(Cr - rx/2, Ci - ry/2);
+        var p = iterateEquation(Cr - rx/2, Ci - ry/2, escapeRadius, steps);
         color = addRGB(color, pickColor(steps, p[0], p[1], p[2]));
       }
 
@@ -333,7 +338,7 @@ function draw(pickColor, superSamples)
     var Cr = Cr_init;
 
     for ( var x=0; x<canvas.width; ++x, Cr += Cr_step, off += 4 ) {
-      var p = iterateEquation(Cr, Ci);
+      var p = iterateEquation(Cr, Ci, escapeRadius, steps);
       var color = pickColor(steps, p[0], p[1], p[2]);
       img.data[off  ] = color[0];
       img.data[off+1] = color[1];
