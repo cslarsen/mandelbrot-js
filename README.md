@@ -3,13 +3,12 @@ Mandelbrot.js
 
 Vanilla Mandelbrot Set renderer in HTML5 canvas and javascript.
 
-This code running in action can be seen at http://mandelbrot-set.com
+This code running in action can be seen at https://csl.name/mandelbrot
 
 Author
 ------
-Written by Christian Stigen Larsen
-
-http://csl.sublevel3.org
+Written by Christian Stigen Larsen  
+https://csl.name
 
 Theory
 ------
