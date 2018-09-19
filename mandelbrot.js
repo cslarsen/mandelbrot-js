@@ -2,7 +2,7 @@
  * The Mandelbrot Set, in HTML5 canvas and javascript.
  * https://github.com/cslarsen/mandelbrot-js
  *
- * Copyright (C) 2012 Christian Stigen Larsen
+ * Copyright (C) 2012, 2018 Christian Stigen Larsen
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  You may obtain
@@ -87,7 +87,7 @@ function getSamples()
  *
  * The Mandelbrot set is rendered taking
  *
- *     Z_{n+1} = Z_{n} + C
+ *     Z_{n+1} = Z_{n}^2 + C
  *
  * with C = x + iy, based on the "look at" coordinates.
  *

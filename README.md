@@ -3,7 +3,8 @@ Mandelbrot.js
 
 Vanilla Mandelbrot Set renderer in HTML5 canvas and javascript.
 
-This code running in action can be seen at https://csl.name/mandelbrot
+This code running in action can be seen at https://csl.name/mandelbrot and you
+can read about it on https://csl.name/post/mandelbrot-rendering/
 
 Author
 ------
@@ -328,7 +329,7 @@ parallelism for hardware speedup or offloads to the GPU.
 
 License
 -------
-Copyright 2012 Christian Stigen Larsen
+Copyright 2012, 2018 Christian Stigen Larsen
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License.  You may obtain a copy
