@@ -322,7 +322,7 @@ Even more optimizations
 -----------------------
 
 Take a look at the optimizations done to the Mandelbrot set in
-[The Computer Language Benchmarks Game](http://shootout.alioth.debian.org/u32/performance.php?test=mandelbrot)
+[The Computer Language Benchmarks Game](https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/mandelbrot.html#mandelbrot)
 
 There are a lot of cool tricks going on there.  Most of _those_ use SSE
 parallelism for hardware speedup or offloads to the GPU.
